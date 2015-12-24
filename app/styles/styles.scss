@@ -1,0 +1,73 @@
+@charset "utf-8";
+
+@import "normalize";
+@import "bourbon";
+@import "neat";
+@import "../../node_modules/material-colors/dist/colors.scss";
+
+// required if using svg icon spritesheets
+.hide {
+	display: none;
+}
+
+body {
+	background-color: $md-grey-100;
+	line-height: 2em;
+	font-size: 14px;
+	text-align: left;
+}
+
+main {
+	padding: {
+		left: 5%;
+		right: 5%;
+	}
+}
+
+header {
+	height: 9rem;
+	width: 100%;
+	@include linear-gradient(to top, $md-orange-200, $md-blue-300);
+	h1 {
+		margin: 0;
+		padding-top: 2rem;
+	}
+	h1, p {
+		color: #fff;
+		text-align: center;
+		font-weight: bold;
+	}
+}
+
+.wrapper {
+	@include outer-container;
+	div {
+		@include span-columns(6);
+		&:last-child {
+			@include omega();
+		}
+	}
+}
+
+div#alpha {
+	@include span-columns(6);
+}
+
+div#beta {
+	@include span-columns(6);
+}
+
+.flex {
+	@include display(flex);
+	@include flex-direction(row);
+	@include align-items(flex-start);
+	@include justify-content(space-between);
+}
+
+.flex > .box {
+	@include flex(1);
+}
+
+footer {
+	text-align: center;
+}
