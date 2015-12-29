@@ -71,3 +71,10 @@ div#beta {
 footer {
 	text-align: center;
 }
+
+#vuewiki {
+	background-color: $md-grey-300;
+	.media {
+		border: 1px solid $md-red-500;
+	}
+}

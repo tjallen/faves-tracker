@@ -23,8 +23,83 @@
 		</header>
 
 		<main>
-			<div id="img"></div>
-			<div id="text"></div>
+			<h1>Vue.js tasks</h1>
+			
+			<div id="app">
+	
+				<tasks-component :list="tasks">
+				</tasks-component>
+	
+			</div> <!-- end app -->
+	
+			<!-- tbd replace w/ vueify or similar -->
+			<template id="tasks-template">
+				<form class="form-inline">
+					<div class="form-group">
+						<input type="text" class="form-control"
+							v-model="newTask" 
+							placeholder="Add a task to do..." 
+							@keyup.enter.prevent="addTask" 
+						>
+						<button class="btn btn-default task-submit-new" 
+							v-if="newTask" 
+							@click.prevent="addTask"
+						>Submit</button>
+					</div>
+				</form>
+	
+				<div class="tasks-list"
+					v-show="list.length"
+				>
+					<p v-show="remaining" class="counter"><span class="num">{{ remaining }}</span> left</p>
+					<p v-show="!remaining" class="counter">All done!</p>
+					<ul class="list-group">
+						<li class="list-group-item" 
+							:class="{ 'completed' : task.completed, 'editing' : task == editedTask }" 
+							v-for="task in list" 
+						>
+	
+							<span class="controls">
+								<input class="task-toggle-completed" type="checkbox" v-model="task.completed">
+								<button class="task-remove" @click="deleteTask( task )"
+								>X</button>
+							</span>
+	
+							<label class="task-label" @click="startEdit(task)">{{ task.text }}</label>
+	
+							<input class="edit" type="text"
+								v-model="task.text"
+								v-task-focus="task == editedTask"
+								@blur="completeEdit(task)"
+								@keyup.enter="completeEdit(task)"
+								@keyup.esc="cancelEdit(task)"
+							>
+						</li>
+					</ul>
+	
+					<button class="btn btn-default clear-completed" 
+					v-show="completed" 
+					@click="clearCompleted"  
+					>
+					Clear completed
+					</button>
+	
+				</div>
+	
+				<p v-else class="prompt">No tasks yet - add some in the field above!</p>
+	
+				<!-- <pre>{{ $data | json }}</pre> -->
+			</template>
+			
+			<h2>Vuewiki</h2>
+			<div id="vuewiki">
+				<div class="media">
+					<div class="media__image"></div>
+					<div class="media__text"></div>
+				</div>
+			</div>
+			
+			
 		</main>
 
 		<footer>
@@ -35,6 +110,7 @@
 		</footer>
 
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+		<script src="scripts/vendors/vue.js"></script>
 
 		<!--inject:js-->
 		<script src="scripts/vendors/vendor.js"></script>
