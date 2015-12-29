@@ -5,72 +5,94 @@
 @import "neat";
 @import "../../node_modules/material-colors/dist/colors.scss";
 
-// required if using svg icon spritesheets
-.hide {
+.hide, input.edit {
 	display: none;
 }
 
 body {
 	background-color: $md-grey-100;
-	line-height: 2em;
-	font-size: 14px;
-	text-align: left;
+	padding: 20px;
 }
 
-main {
-	padding: {
-		left: 5%;
-		right: 5%;
-	}
+button.task-submit-new, button.clear-completed {
+	background-color: $md-blue-grey-200;
+	border: none;
+	color: #fff;
+	width: auto;
+	margin: 5px 0;
+	padding: 3px 10px;
+	border-radius: 3px;
+	text-transform: uppercase;
+	float: right;
 }
 
-header {
-	height: 9rem;
-	width: 100%;
-	@include linear-gradient(to top, $md-orange-200, $md-blue-300);
-	h1 {
-		margin: 0;
-		padding-top: 2rem;
-	}
-	h1, p {
-		color: #fff;
-		text-align: center;
-		font-weight: bold;
-	}
+.form-inline {
+	height: 50px;
+	margin-bottom: 40px;
+	display: block;
 }
 
-.wrapper {
-	@include outer-container;
-	div {
-		@include span-columns(6);
-		&:last-child {
-			@include omega();
+.list-group {
+	margin-bottom: 10px;
+}
+
+.list-group-item {
+	.task-label {
+	}
+	.controls {
+		float: right;
+		button {
+			text-transform: uppercase;
+			color: $md-blue-grey-500;
+			border: none;
+			background-color: transparent;
 		}
 	}
+	&.editing {
+		label {
+			display: none;
+		}
+		input {
+			display: inline-block;
+		}
+	}
+	&.completed {
+		text-decoration: line-through;
+		color: $md-grey-300;
+	}
 }
 
-div#alpha {
-	@include span-columns(6);
-}
-
-div#beta {
-	@include span-columns(6);
-}
-
-.flex {
-	@include display(flex);
-	@include flex-direction(row);
-	@include align-items(flex-start);
-	@include justify-content(space-between);
-}
-
-.flex > .box {
-	@include flex(1);
-}
-
-footer {
+.counter {
+	color: $md-blue-grey-200;
+	margin: 10px;
 	text-align: center;
+	text-transform: uppercase;
+	font-size: 12px;
+	font-weight: bold;
+	letter-spacing: 1px;
+	span.num {
+		color: #fff;
+		border-radius: 15px;
+		background-color: $md-blue-grey-300;
+		padding: 2px 5px;
+	}
 }
+
+.prompt {
+	text-align: center;
+	font-weight: bold;
+	font-size: 11px;
+	color: $md-grey-500;
+}
+
+pre {
+	margin: {
+		top: 10px;
+		bottom: 10px;
+	}
+	font-size: 10px;
+}
+
 
 #vuewiki {
 	background-color: $md-grey-300;

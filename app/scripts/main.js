@@ -6,22 +6,27 @@ var $wikiText = $wikiMedia.find( '.media__text' );
 var $wikiImage = $wikiMedia.find( '.media__image' );
 // bulding the url
 var mediaTitles = [
-	'The Wire',
-	'Breaking Bad',
-	'Deadwood'
+	// 'The Wire',
+	// 'Breaking Bad',
+	// 'Deadwood',
+	'The Wire'
 ];
 var mediaDatas = [];
 var _apiEndpoint = 'http://en.wikipedia.org/w/api.php';
 var apiAction = '?action=parse';
 var apiFormat = '&format=json';
-var apiProp = '&prop=text|categories';
+var apiProp = '&prop=text|images|categories';
 //var _urlBase = 'http://en.wikipedia.org/w/api.php?action=parse&format=json&prop=text|categories&section=0&page=';
 var _urlBase = _apiEndpoint + apiAction + apiFormat + apiProp +  '&section=0&page=';
 var searchBase = _apiEndpoint + '?action=opensearch&format=json&limit=10&namespace=0&search=';
 
+/* request url for parse -> query change
+/w/api.php?action=query&prop=categories|extracts|pageprops&format=json&exintro=&explaintext=&titles=The%20Wire
+*/
 
 
-function ajaxCall( _urlBase, theTitle, callback ) {
+
+function ajaxCall( theTitle, callback ) {
 	$.ajax({
 		type: 'GET',
 		url: _urlBase + theTitle.split( ' ' ).join( '_' ) + '&callback=?',
@@ -36,7 +41,6 @@ function ajaxCall( _urlBase, theTitle, callback ) {
 			var cats = data.parse.categories;
 			// debug info
 			mediaDatas.push( data );
-			console.log(data.parse.categories);
 			for ( var i = 0; i < cats.length; i++ ) {
 				// check if its a disambiguation pg
 				if ( cats[i]['*'] === 'Disambiguation_pages' ) {
@@ -45,6 +49,7 @@ function ajaxCall( _urlBase, theTitle, callback ) {
 				}
 			}
 			console.log( 'Success! Looking up ' + this.url );
+			console.log(data.parse);
 			// get some text
 			var markup = data.parse.text['*'];
       var blurb = $( '<div></div>' ).html( markup );
@@ -52,33 +57,26 @@ function ajaxCall( _urlBase, theTitle, callback ) {
 			blurb.find( 'a' ).each( function() { $( this ).replaceWith($( this ).html()); });
 			blurb.find( 'sup' ).remove();
 			// get the article image
+			var title = data.parse.title;
 			var images = blurb.find( 'img' );
 			var mainImage = images[0];
 			// set text and image
-			$wikiImage.append( images[0] );
-			$wikiText.append( $( blurb ).find( 'p' ) );
+			vm.$data.tasks.push({ title: title, text: blurb[0], image: data.parse.images[0] });
+			//$wikiImage.append( images[0] );
+			//$wikiText.append( $( blurb ).find( 'p' ).first() );
 		},
 		error: function( errorMessage ) {
 			console.log( 'error!' );
 			console.log( errorMessage.statusText );
 		}
 	});
-	if ( callback && typeof( callback ) === 'function' ) {
-		callback();
-	}
 }
 
 $( document ).ready( function() {
 	for ( var i = 0; i < mediaTitles.length; i++ ) {
-		ajaxCall( _urlBase, mediaTitles[i], myCallback );
+		ajaxCall( mediaTitles[i] );
 	}
 });
-
-function myCallback() {
-	console.log( 'eeyyyy im a callback' );
-	console.log( myData );
-}
-
 
 
 
@@ -88,6 +86,26 @@ VUE
 ****************************/
 
 Vue.config.debug = true;
+
+
+/*Vue.component('typeahead', {
+	//template: VueTypeaheadTemplate, // optional if u inline
+	mixins: [VueTypeaheadMixin],
+	data: function () {
+		return {
+			src: '...', // required
+			data: {}, // opt
+			limit: 5, // opt
+			onHit: function( item ) { // required
+				// ...
+			},
+			prepareResponseData: function( data ) { // optional
+				// data = ...
+				return data;
+			}
+		};
+	}
+});*/
 
 // extend and register a global component in 1 step
 var VC = Vue.component('tasks-component', {
@@ -111,9 +129,10 @@ var VC = Vue.component('tasks-component', {
 	},
 	methods: {
 		addTask: function() {
-			var text = this.newTask.trim();
-			if ( text ) {
-				this.list.push({ text: text, completed: false});
+			var title = this.newTask.trim();
+			if ( title ) {
+				ajaxCall( title );
+				//this.list.push({ title: title });
 				this.newTask = '';
 			}
 		},
@@ -130,7 +149,7 @@ var VC = Vue.component('tasks-component', {
 			task.completed = ! task.completed;
 		},
 		startEdit: function( task ) {
-			this.originalText = task.text;
+			this.originalTitle = task.title;
 			this.editedTask = task;
 		},
 		completeEdit: function( task ) {
@@ -138,14 +157,14 @@ var VC = Vue.component('tasks-component', {
 				return;
 			}
 			this.editedTask = '';
-			task.text = task.text;
+			task.title = task.title;
 			// if text is empty, delete this task
-			if ( !task.text ) {
+			if ( !task.title ) {
 				this.deleteTask( task );
 			}
 		},
 		cancelEdit: function( task ) {
-			task.text = this.originalText;
+			task.title = this.originalTitle;
 			this.editedTask = null;
 		},
 		clearCompleted: function() {
@@ -170,8 +189,9 @@ var vm = new Vue({
 	el: '#app',
 	data: {
 		tasks: [
-			{ text: 'A task', completed: false },
-			{ text: 'A completed task', completed: true } 
+			{ title: 'Deadwood' },
+			{ title: 'Breaking Bad' },
+			{ title: 'The Wire' }
 		]
 	}
 /*	filters: {

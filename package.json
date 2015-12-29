@@ -44,6 +44,10 @@
     "node-neat": "^1.7.2",
     "node-normalize-scss": "^1.0.3",
     "run-sequence": "^1.1.5",
-    "stream-series": "^0.1.1"
+    "stream-series": "^0.1.1",
+  },
+  "dependencies": {
+		"vue-resource": "^0.5.1",
+    "vue-typeahead": "^2.0.0"
   }
 }
