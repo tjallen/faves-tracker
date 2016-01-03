@@ -25,6 +25,9 @@
 		<main>
 		
 			<div id="app">
+				
+				<search-component :results="searchResults">
+				</search-component>
 			
 				<tasks-component :list="tasks">
 				</tasks-component>
@@ -32,12 +35,25 @@
 			</div> <!-- end app -->
 	
 			<!-- tbd replace w/ vueify or similar -->
+			<template id="search-template">
+				<div class="form-group">
+					<input type="text" class="form-control" placeholder="search media" 
+					v-model="searchQuery" 
+					@keyup.enter.prevent="submitSearch"
+					>
+				</div>
+				<div class="search-results" 
+				
+				>
+					<p>Results:</p>
+				</div>
+			</template>
+			
 			<template id="tasks-template">
 				<form class="form-inline">
 					<div class="form-group">
-						<input type="text" class="form-control"
+						<input type="text" class="form-control" placeholder="Add media directly" 
 							v-model="newTask" 
-							placeholder="Add a task to do..." 
 							@keyup.enter.prevent="addTask" 
 						>
 						<button class="btn btn-default task-submit-new" 
@@ -50,8 +66,7 @@
 				<div class="tasks-list"
 					v-show="list.length"
 				>
-					<p v-show="remaining" class="counter"><span class="num">{{ remaining }}</span> items</p>
-					<p v-show="!remaining" class="counter">No items!</p>
+					<p v-show="!list.length" class="counter">No items!</p>
 					<ul class="list-group">
 						<li class="list-group-item" 
 							:class="{ 'completed' : task.completed, 'editing' : task == editedTask }" 
@@ -75,14 +90,7 @@
 							>
 						</li>
 					</ul>
-	
-					<button class="btn btn-default clear-completed" 
-					v-show="completed" 
-					@click="clearCompleted"  
-					>
-					Clear completed
-					</button>
-	
+
 				</div>
 	
 				<p v-else class="prompt">No tasks yet - add some in the field above!</p>
@@ -103,6 +111,7 @@
 
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
 		<script src="scripts/vendors/vue.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/vue-resource/0.5.1/vue-resource.js"></script>
 
 		<!--inject:js-->
 		<script src="scripts/vendors/vendor.js"></script>

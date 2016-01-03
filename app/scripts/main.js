@@ -7,27 +7,45 @@ var $wikiImage = $wikiMedia.find( '.media__image' );
 // bulding the url
 var mediaTitles = [
 	// 'The Wire',
-	// 'Breaking Bad',
+	'Breaking Bad',
 	// 'Deadwood',
 	'The Wire'
 ];
-var mediaDatas = [];
+var dataCache = {};
 var _apiEndpoint = 'http://en.wikipedia.org/w/api.php';
-var apiAction = '?action=parse';
+var apiAction = '?action=query';
 var apiFormat = '&format=json';
-var apiProp = '&prop=text|images|categories';
+var apiProp = '&prop=categories|extracts|pageprops';
 //var _urlBase = 'http://en.wikipedia.org/w/api.php?action=parse&format=json&prop=text|categories&section=0&page=';
-var _urlBase = _apiEndpoint + apiAction + apiFormat + apiProp +  '&section=0&page=';
-var searchBase = _apiEndpoint + '?action=opensearch&format=json&limit=10&namespace=0&search=';
+var _urlBase = _apiEndpoint + apiAction + apiFormat + apiProp +  '&exsentences=3&exintro=&explaintext=&titles=';
+var searchBase = _apiEndpoint + '?action=opensearch&format=json&limit=10&namespace=0&suggest=&search=';
 
 /* request url for parse -> query change
 /w/api.php?action=query&prop=categories|extracts|pageprops&format=json&exintro=&explaintext=&titles=The%20Wire
 */
 
+/*function ajaxSearch( theTitle ) {
+	return $.ajax({
+		type: 'GET',
+		url: searchBase + theTitle.split( ' ' ).join( '_' ),
+		contentType: 'application/json; charset=utf-8',
+		async: false,
+		headers: { 'Api-User-Agent': 'Vuewiki 0.1 (github.com/tjallen/vuewiki); thomwork@gmail.com' },
+		dataType: 'jsonp',
+		success: function ( data, textStatus, jqXHR ) {
+			console.log(data[1]); // page titles
+			console.log(data[2]); // descriptions
+			console.log(data[3]); // urls
+		},
+		error: function( errorMessage ) {
+			alert( 'error!' );
+			console.log( errorMessage.statusText );
+		}
+	});
+}*/
 
-
-function ajaxCall( theTitle, callback ) {
-	$.ajax({
+/*function ajaxCall( theTitle, callback ) {
+	return $.ajax({
 		type: 'GET',
 		url: _urlBase + theTitle.split( ' ' ).join( '_' ) + '&callback=?',
 		contentType: 'application/json; charset=utf-8',
@@ -38,77 +56,72 @@ function ajaxCall( theTitle, callback ) {
 		},
 		dataType: 'json',
 		success: function ( data, textStatus, jqXHR ) {
-			var cats = data.parse.categories;
-			// debug info
-			mediaDatas.push( data );
-			for ( var i = 0; i < cats.length; i++ ) {
-				// check if its a disambiguation pg
-				if ( cats[i]['*'] === 'Disambiguation_pages' ) {
-					console.log("disambiguation page detected! " + cats[i]['*']);
-					// go to the corrected page
-				}
+			var dataID = Object.getOwnPropertyNames(data.query.pages);
+			var dataEntry = data.query.pages[dataID];
+			var dataCats = dataEntry.categories;
+			// check if disambiguation page
+			if ( dataEntry.pageprops.hasOwnProperty('disambiguation') ) {
+				console.log('DISAMBIG');
+			} else {
+				
 			}
-			console.log( 'Success! Looking up ' + this.url );
-			console.log(data.parse);
-			// get some text
-			var markup = data.parse.text['*'];
-      var blurb = $( '<div></div>' ).html( markup );
-			// remove links and refs
-			blurb.find( 'a' ).each( function() { $( this ).replaceWith($( this ).html()); });
-			blurb.find( 'sup' ).remove();
-			// get the article image
-			var title = data.parse.title;
-			var images = blurb.find( 'img' );
-			var mainImage = images[0];
-			// set text and image
-			vm.$data.tasks.push({ title: title, text: blurb[0], image: data.parse.images[0] });
-			//$wikiImage.append( images[0] );
-			//$wikiText.append( $( blurb ).find( 'p' ).first() );
+			var wikiTitle = dataEntry.title;
+			var wikiImage = dataEntry.pageprops.page_image;
+			var wikiExtract = dataEntry.extract;
+			// console.log(dataEntry);
+			vm.$data.tasks.push( { title: wikiTitle, text: wikiExtract, image: wikiImage } );
+			//var dataTitle = data.
+			//dataCache[dataID] = data;
 		},
 		error: function( errorMessage ) {
-			console.log( 'error!' );
+			alert( 'error!' );
 			console.log( errorMessage.statusText );
 		}
 	});
-}
+}*/
 
-$( document ).ready( function() {
+/*$( document ).ready( function() {
 	for ( var i = 0; i < mediaTitles.length; i++ ) {
 		ajaxCall( mediaTitles[i] );
 	}
-});
-
-
+});*/
 
 
 /****************************
 VUE 
 ****************************/
 
+var vueResourceURL = 'https://en.wikipedia.org/w/api.php?action=parse&format=json&prop=text|categories&section=0&page=Cowboy_Bebop';
+
 Vue.config.debug = true;
 
-
-/*Vue.component('typeahead', {
-	//template: VueTypeaheadTemplate, // optional if u inline
-	mixins: [VueTypeaheadMixin],
-	data: function () {
+// SEARCH: extend and register global component
+var searchC = Vue.component('search-component', {
+	template: '#search-template',
+	http: {
+		headers: { 'Api-User-Agent': 'Vuewiki 0.1 (github.com/tjallen/vuewiki); thomwork@gmail.com' }
+	},
+	data: function() {
 		return {
-			src: '...', // required
-			data: {}, // opt
-			limit: 5, // opt
-			onHit: function( item ) { // required
-				// ...
-			},
-			prepareResponseData: function( data ) { // optional
-				// data = ...
-				return data;
-			}
+			searchQuery: ''
 		};
+	},
+	props: ['results'],
+	methods: {
+		submitSearch: function() {
+			// var title = this.searchQuery.trim();
+			// if ( title ) {
+			// 	this.results.push( ajaxSearch( title ) );
+			// }
+			this.$http.jsonp(vueResourceURL, function( data ) {
+				console.log( data );
+			});
+		}
 	}
-});*/
+});
 
-// extend and register a global component in 1 step
-var VC = Vue.component('tasks-component', {
+// TASKS: extend and register global component
+var taskC = Vue.component('tasks-component', {
 	template: '#tasks-template',
 	data: function() {
 		return {
@@ -118,35 +131,17 @@ var VC = Vue.component('tasks-component', {
 	},
 	props: ['list'],
 	computed: {
-		// compute remaining active tasks
-		remaining: function() {
-			return this.list.filter( this.isActive ).length;
-		},
-		// compute completed tasks on list
-		completed: function() {
-			return this.list.filter( this.isComplete ).length;
-		}
 	},
 	methods: {
 		addTask: function() {
 			var title = this.newTask.trim();
 			if ( title ) {
 				ajaxCall( title );
-				//this.list.push({ title: title });
 				this.newTask = '';
 			}
 		},
 		deleteTask: function( task ) {
 			this.list.$remove( task );
-		},
-		isComplete: function( task ) {
-			return task.completed;
-		},
-		isActive: function ( task ) {
-			return ! this.isComplete( task );
-		},
-		toggleCompleted: function ( task ) {
-			task.completed = ! task.completed;
 		},
 		startEdit: function( task ) {
 			this.originalTitle = task.title;
@@ -166,9 +161,6 @@ var VC = Vue.component('tasks-component', {
 		cancelEdit: function( task ) {
 			task.title = this.originalTitle;
 			this.editedTask = null;
-		},
-		clearCompleted: function() {
-			this.list = this.list.filter( this.isActive );
 		}
 	},
 	directives: {
@@ -189,10 +181,11 @@ var vm = new Vue({
 	el: '#app',
 	data: {
 		tasks: [
-			{ title: 'Deadwood' },
-			{ title: 'Breaking Bad' },
-			{ title: 'The Wire' }
-		]
+			// { title: 'Deadwood' },
+			// { title: 'Breaking Bad' },
+			// { title: 'The Wire' }
+		],
+		searchResults: []
 	}
 /*	filters: {
 		all: function( tasks ) {
