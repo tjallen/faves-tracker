@@ -33,25 +33,37 @@
 				</tasks-component>
 				
 			</div> <!-- end app -->
+			
+			<!-- <input type="text"
+			 placeholder="Search twitter user"
+			 autocomplete="off"
+			 v-model="query"
+			 @keydown.down="down"
+			 @keydown.up="up"
+			 @keydown.enter="hit"
+			 @keydown.esc="reset"
+			 @blur="reset"
+			 @input="update"/> -->
 	
-			<!-- tbd replace w/ vueify or similar -->
+			<!-- tbd replace w/ vueify or similar -->			 
 			<template id="search-template">
 				<div class="form-group">
 					<p v-if="loading">Loading...</p>
 					<input type="text" class="form-control" placeholder="search media" 
 					v-model="query" 
-					@keyup.prevent="progress | debounce 500" 
+					@keyup="progress | debounce 500" 
 					@keyup.esc="clear" 
+					@blur="clear"
 					>
 				</div>
 				<div class="search-results" 
-					v-show="results.length"
+					v-show="resultsPresent"
 				>
 					<p>Results:</p>
 					<ul class="list-group">
 						<li class="list-group-item" 
 							v-for="result in results"
-							@click.prevent="addMedia( result )"
+							@mousedown="addMedia( result )"
 						>
 						{{ result.title }} 
 						</li>

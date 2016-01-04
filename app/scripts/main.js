@@ -106,6 +106,11 @@ Vue.component('search-component', {
 		};
 	},
 	props: ['results'],
+	computed: {
+		resultsPresent: function() {
+				return this.results.length;
+		}
+	},
 	methods: {
 		// update search results array or reset
 		progress: function() {
@@ -216,7 +221,7 @@ var VM = new Vue({
 			// { title: 'Breaking Bad' },
 			// { title: 'The Wire' }
 		],
-		searchResults: []
+		searchResults: [],
 	}
 /*	filters: {
 		all: function( tasks ) {
