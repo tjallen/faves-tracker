@@ -103,7 +103,7 @@ Vue.component('media-component', {
 			editedMedia: null,
 		};
 	},
-	props: ['list'],
+	props: ['list', 'genres'],
 	computed: {
 	},
 	methods: {
@@ -153,15 +153,15 @@ var VM = new Vue({
 			// { title: 'The Wire' }
 		],
 		searchResults: [],
-		categories: [
-			"tv",
-			"film",
-			"album",
-			"artist (music)",
-			"artist (art)",
-			"game",
-			"book",
-			"play"
+		genres: [
+			{ title: "tv", order: 1 },
+			{ title: "film", order: 2 },
+			{ title: "album", order: 3 },
+			{ title: "artist (music)", order: 4 },
+			{ title: "artist (art)", order: 5 },
+			{ title: "game", order: 6 },
+			{ title: "book", order: 7 },
+			{ title: "play", order: 8 }
 		]
 	}
 /*	filters: {

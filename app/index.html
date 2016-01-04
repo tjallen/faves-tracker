@@ -17,7 +17,6 @@
 
 	<body>
 		<!-- inject:svg -->
-		<svg xmlns="http://www.w3.org/2000/svg" class="hide"><symbol id="github" viewBox="0 0 33.833 32.916"><path fill-rule="evenodd" clip-rule="evenodd" d="M16.96.537C7.965.537.67 7.83.67 16.827c0 7.197 4.668 13.303 11.142 15.457.814.15 1.112-.354 1.112-.785 0-.388-.014-1.412-.022-2.772-4.53.984-5.487-2.184-5.487-2.184-.74-1.882-1.81-2.383-1.81-2.383-1.478-1.01.113-.99.113-.99 1.635.116 2.495 1.68 2.495 1.68 1.453 2.49 3.813 1.77 4.74 1.354.15-1.053.57-1.77 1.035-2.178-3.617-.41-7.42-1.81-7.42-8.05 0-1.78.635-3.233 1.677-4.372-.167-.412-.727-2.068.16-4.31 0 0 1.368-.44 4.48 1.67 1.298-.362 2.692-.543 4.077-.55 1.383.007 2.777.188 4.078.55 3.11-2.11 4.475-1.67 4.475-1.67.89 2.242.33 3.898.162 4.31 1.044 1.14 1.674 2.593 1.674 4.37 0 6.26-3.808 7.636-7.437 8.04.585.502 1.106 1.496 1.106 3.016 0 2.178-.02 3.935-.02 4.47 0 .435.292.94 1.12.782 6.466-2.158 11.13-8.26 11.13-15.454 0-8.998-7.293-16.29-16.29-16.29z"/></symbol></svg>
 		<!-- endinject -->
 		<header>
 		</header>
@@ -29,22 +28,13 @@
 				<search-component :results="searchResults">
 				</search-component>
 			
-				<media-component :list="medias">
+				<media-component :list="medias" :genres="genres">
 				</media-component>
+				
+				<pre>{{ $data | json }}</pre>
 				
 			</div> <!-- end app -->
 			
-			<!-- <input type="text"
-			 placeholder="Search twitter user"
-			 autocomplete="off"
-			 v-model="query"
-			 @keydown.down="down"
-			 @keydown.up="up"
-			 @keydown.enter="hit"
-			 @keydown.esc="reset"
-			 @blur="reset"
-			 @input="update"/> -->
-	
 			<!-- tbd replace w/ vueify or similar -->			 
 			<template id="search-template">
 				<div class="form-group">
@@ -73,32 +63,49 @@
 			</template>
 			
 			<template id="media-template">
-
+				
 				<div class="medias-list"
 					v-show="list.length"
 				>
 					<p v-show="!list.length" class="counter">No items!</p>
 					<ul class="list-group">
 						<li class="list-group-item" 
-							:class="{ 'completed' : media.completed, 'editing' : media == editedMedia }" 
+							:class="{ 'genre' : media.genre, 'editing' : media == editedMedia }" 
 							v-for="media in list" 
+							@click="startEdit( media )"
 						>
 	
 							<span class="controls">
-								<input class="media-toggle-completed" type="checkbox" v-model="media.completed">
 								<button class="media-remove" @click="deleteMedia( media )"
 								>X</button>
 							</span>
 	
-							<label class="media-label" @click="startEdit( media )">{{ media.title }}</label>
+							<label class="media-label">{{ media.title }}</label>
 	
-							<input class="edit" type="text"
-								v-model="media.text"
-								v-media-focus="media == editedMedia"
-								@blur="completeEdit( media )"
-								@keyup.enter="completeEdit( media )"
-								@keyup.esc="cancelEdit( media )"
+							<div class="media--editing"
+							@blur="completeEdit( media )"
+							v-show="media == editedMedia"
 							>
+								<input class="edit" type="text"
+									v-model="media.title"
+									@keyup.enter="completeEdit( media )"
+									@keyup.esc="cancelEdit( media )"
+								>
+								<textarea name="" id="" cols="30" rows="3"
+									v-model="media.blurb"
+								></textarea>
+								<ul>
+									<p>Select genre: </p>
+									<li
+									v-for="genre in genres"
+									>
+									 {{ genre.title }}
+									</li>
+								</ul>
+								<button
+								@mousedown="completeEdit( media )"
+								>Done</button>
+							</div>
 						</li>
 					</ul>
 
