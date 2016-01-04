@@ -1,6 +1,7 @@
-var myData;
+// dev vars
+
 // cache dom
-var myApp = $( '#vuewiki' );
+/*var myApp = $( '#vuewiki' );
 var $wikiMedia = $( '.media' );
 var $wikiText = $wikiMedia.find( '.media__text' );
 var $wikiImage = $wikiMedia.find( '.media__image' );
@@ -10,7 +11,7 @@ var mediaTitles = [
 	'Breaking Bad',
 	// 'Deadwood',
 	'The Wire'
-];
+];*/
 var dataCache = {};
 var _apiEndpoint = 'http://en.wikipedia.org/w/api.php';
 var apiAction = '?action=query';
@@ -23,69 +24,6 @@ var searchBase = _apiEndpoint + '?action=opensearch&format=json&limit=10&namespa
 /* request url for parse -> query change
 /w/api.php?action=query&prop=categories|extracts|pageprops&format=json&exintro=&explaintext=&titles=The%20Wire
 */
-
-/*function ajaxSearch( theTitle ) {
-	return $.ajax({
-		type: 'GET',
-		url: searchBase + theTitle.split( ' ' ).join( '_' ),
-		contentType: 'application/json; charset=utf-8',
-		async: false,
-		headers: { 'Api-User-Agent': 'Vuewiki 0.1 (github.com/tjallen/vuewiki); thomwork@gmail.com' },
-		dataType: 'jsonp',
-		success: function ( data, textStatus, jqXHR ) {
-			console.log(data[1]); // page titles
-			console.log(data[2]); // descriptions
-			console.log(data[3]); // urls
-		},
-		error: function( errorMessage ) {
-			alert( 'error!' );
-			console.log( errorMessage.statusText );
-		}
-	});
-}*/
-
-/*function ajaxCall( theTitle, callback ) {
-	return $.ajax({
-		type: 'GET',
-		url: _urlBase + theTitle.split( ' ' ).join( '_' ) + '&callback=?',
-		contentType: 'application/json; charset=utf-8',
-		async: false,
-		headers: { 'Api-User-Agent': 'Vuewiki 0.1 (github.com/tjallen/vuewiki); thomwork@gmail.com' },
-		xhrFields: {
-				withCredentials: true
-		},
-		dataType: 'json',
-		success: function ( data, textStatus, jqXHR ) {
-			var dataID = Object.getOwnPropertyNames(data.query.pages);
-			var dataEntry = data.query.pages[dataID];
-			var dataCats = dataEntry.categories;
-			// check if disambiguation page
-			if ( dataEntry.pageprops.hasOwnProperty('disambiguation') ) {
-				console.log('DISAMBIG');
-			} else {
-				
-			}
-			var wikiTitle = dataEntry.title;
-			var wikiImage = dataEntry.pageprops.page_image;
-			var wikiExtract = dataEntry.extract;
-			// console.log(dataEntry);
-			VM.$data.tasks.push( { title: wikiTitle, text: wikiExtract, image: wikiImage } );
-			//var dataTitle = data.
-			//dataCache[dataID] = data;
-		},
-		error: function( errorMessage ) {
-			alert( 'error!' );
-			console.log( errorMessage.statusText );
-		}
-	});
-}*/
-
-/*$( document ).ready( function() {
-	for ( var i = 0; i < mediaTitles.length; i++ ) {
-		ajaxCall( mediaTitles[i] );
-	}
-});*/
-
 
 /****************************
 VUE 
@@ -222,6 +160,16 @@ var VM = new Vue({
 			// { title: 'The Wire' }
 		],
 		searchResults: [],
+		categories: [
+			"tv",
+			"film",
+			"album",
+			"artist (music)",
+			"artist (art)",
+			"game",
+			"book",
+			"play"
+		]
 	}
 /*	filters: {
 		all: function( tasks ) {
