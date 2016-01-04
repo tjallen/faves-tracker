@@ -68,7 +68,8 @@ Vue.component('search-component', {
 						resultsCache.push({ 
 							title: response.data[1][i], 
 							blurb: response.data[2][i], 
-							link: response.data[3][i]
+							link: response.data[3][i],
+							genre: ''
 						});
 					}
 					this.loading = false;
@@ -86,7 +87,7 @@ Vue.component('search-component', {
 		// add selected result to the media array
 		addMedia: function( media ) {
 			this.$http.jsonp(_urlBase + media).then(function( response ) {
-				VM.$data.tasks.push( media );
+				VM.$data.medias.push( media );
 				this.query = '';
 				this.results = [];
 			});
@@ -94,52 +95,44 @@ Vue.component('search-component', {
 	}
 });
 
-// TASKS: extend and register global component
-Vue.component('tasks-component', {
-	template: '#tasks-template',
+// MEDIAS: extend and register global component
+Vue.component('media-component', {
+	template: '#media-template',
 	data: function() {
 		return {
-			newTask: '',
-			editedTask: null,
+			editedMedia: null,
 		};
 	},
 	props: ['list'],
 	computed: {
 	},
 	methods: {
-		addTask: function() {
-			var title = this.newTask.trim();
-			if ( title ) {
-				ajaxCall( title );
-				this.newTask = '';
-			}
+		deleteMedia: function( media ) {
+			this.list.$remove( media );
 		},
-		deleteTask: function( task ) {
-			this.list.$remove( task );
+		startEdit: function( media ) {
+			this.originalTitle = media.title;
+			this.editedMedia = media;
 		},
-		startEdit: function( task ) {
-			this.originalTitle = task.title;
-			this.editedTask = task;
-		},
-		completeEdit: function( task ) {
-			if ( !this.editedTask ) {
+		completeEdit: function( media ) {
+			if ( !this.editedMedia ) {
 				return;
 			}
-			this.editedTask = '';
-			task.title = task.title;
-			// if text is empty, delete this task
-			if ( !task.title ) {
-				this.deleteTask( task );
+			this.editedMedia = '';
+			media.title = media.title;
+			// if text is empty, delete this media
+			if ( !media.title ) {
+				this.deleteMedia( media );
 			}
 		},
-		cancelEdit: function( task ) {
-			task.title = this.originalTitle;
-			this.editedTask = null;
+		cancelEdit: function( media ) {
+			media.title = this.originalTitle;
+			this.editedMedia = null;
 		}
 	},
 	directives: {
 		// only focus on input after dom has updated
-		'task-focus': function( val ) {
+		'media-focus': function( val ) {
 			if ( !val ) {
 				return;
 			}
@@ -154,7 +147,7 @@ Vue.component('tasks-component', {
 var VM = new Vue({
 	el: '#app',
 	data: {
-		tasks: [
+		medias: [
 			// { title: 'Deadwood' },
 			// { title: 'Breaking Bad' },
 			// { title: 'The Wire' }

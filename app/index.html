@@ -29,8 +29,8 @@
 				<search-component :results="searchResults">
 				</search-component>
 			
-				<tasks-component :list="tasks">
-				</tasks-component>
+				<media-component :list="medias">
+				</media-component>
 				
 			</div> <!-- end app -->
 			
@@ -72,44 +72,32 @@
 				<pre>{{ $data | json }}</pre>
 			</template>
 			
-			<template id="tasks-template">
-				<form class="form-inline">
-					<div class="form-group">
-						<input type="text" class="form-control" placeholder="Add media directly" 
-							v-model="newTask" 
-							@keyup.enter.prevent="addTask" 
-						>
-						<button class="btn btn-default task-submit-new" 
-							v-if="newTask" 
-							@click.prevent="addTask"
-						>Submit</button>
-					</div>
-				</form>
-	
-				<div class="tasks-list"
+			<template id="media-template">
+
+				<div class="medias-list"
 					v-show="list.length"
 				>
 					<p v-show="!list.length" class="counter">No items!</p>
 					<ul class="list-group">
 						<li class="list-group-item" 
-							:class="{ 'completed' : task.completed, 'editing' : task == editedTask }" 
-							v-for="task in list" 
+							:class="{ 'completed' : media.completed, 'editing' : media == editedMedia }" 
+							v-for="media in list" 
 						>
 	
 							<span class="controls">
-								<input class="task-toggle-completed" type="checkbox" v-model="task.completed">
-								<button class="task-remove" @click="deleteTask( task )"
+								<input class="media-toggle-completed" type="checkbox" v-model="media.completed">
+								<button class="media-remove" @click="deleteMedia( media )"
 								>X</button>
 							</span>
 	
-							<label class="task-label" @click="startEdit(task)">{{ task.title }}</label>
+							<label class="media-label" @click="startEdit( media )">{{ media.title }}</label>
 	
 							<input class="edit" type="text"
-								v-model="task.text"
-								v-task-focus="task == editedTask"
-								@blur="completeEdit(task)"
-								@keyup.enter="completeEdit(task)"
-								@keyup.esc="cancelEdit(task)"
+								v-model="media.text"
+								v-media-focus="media == editedMedia"
+								@blur="completeEdit( media )"
+								@keyup.enter="completeEdit( media )"
+								@keyup.esc="cancelEdit( media )"
 							>
 						</li>
 					</ul>
