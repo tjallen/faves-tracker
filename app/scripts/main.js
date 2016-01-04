@@ -91,12 +91,10 @@ var searchBase = _apiEndpoint + '?action=opensearch&format=json&limit=10&namespa
 VUE 
 ****************************/
 
-var vueResourceURL = 'https://en.wikipedia.org/w/api.php?action=parse&format=json&prop=text|categories&section=0&page=Cowboy_Bebop';
-
 Vue.config.debug = true;
 
 // SEARCH: extend and register global component
-var searchC = Vue.component('search-component', {
+Vue.component('search-component', {
 	template: '#search-template',
 	http: {
 		headers: { 'Api-User-Agent': 'Vuewiki 0.1 (github.com/tjallen/vuewiki); thomwork@gmail.com' }
@@ -108,20 +106,30 @@ var searchC = Vue.component('search-component', {
 	},
 	props: ['results'],
 	methods: {
-		submitSearch: function() {
-			// var title = this.searchQuery.trim();
-			// if ( title ) {
-			// 	this.results.push( ajaxSearch( title ) );
-			// }
-			this.$http.jsonp(vueResourceURL, function( data ) {
-				console.log( data );
-			});
+		performSearch: function() {
+			// if text present when submitted, perform GET request
+			var title = this.searchQuery.trim();
+			if ( title ) {
+				this.$http.jsonp(searchBase + title).then(function( response ) {
+					// for each result, push an object to results array
+					for ( var i = 0; i < response.data[1].length; i++ ) {
+						this.results.push({ 
+							title: response.data[1][i], 
+							blurb: response.data[2][i], 
+							link: response.data[3][i] 
+						});
+					}
+				});
+				// clear results if field is empty
+			} else {
+				this.results = '';
+			}
 		}
 	}
 });
 
 // TASKS: extend and register global component
-var taskC = Vue.component('tasks-component', {
+Vue.component('tasks-component', {
 	template: '#tasks-template',
 	data: function() {
 		return {

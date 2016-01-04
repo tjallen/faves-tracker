@@ -39,14 +39,23 @@
 				<div class="form-group">
 					<input type="text" class="form-control" placeholder="search media" 
 					v-model="searchQuery" 
-					@keyup.enter.prevent="submitSearch"
+					@keyup.enter.prevent="performSearch"
 					>
 				</div>
 				<div class="search-results" 
-				
+					v-show="results.length"
 				>
 					<p>Results:</p>
+					<ul class="list-group">
+						<li class="list-group-item" 
+							v-for="result in results"
+						>
+						{{ result.title }} 
+						<br>({{ result.blurb }})
+						</li>
+					</ul>
 				</div>
+				<pre>{{ $data | json }}</pre>
 			</template>
 			
 			<template id="tasks-template">
