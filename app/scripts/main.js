@@ -69,7 +69,7 @@ var searchBase = _apiEndpoint + '?action=opensearch&format=json&limit=10&namespa
 			var wikiImage = dataEntry.pageprops.page_image;
 			var wikiExtract = dataEntry.extract;
 			// console.log(dataEntry);
-			vm.$data.tasks.push( { title: wikiTitle, text: wikiExtract, image: wikiImage } );
+			VM.$data.tasks.push( { title: wikiTitle, text: wikiExtract, image: wikiImage } );
 			//var dataTitle = data.
 			//dataCache[dataID] = data;
 		},
@@ -101,29 +101,52 @@ Vue.component('search-component', {
 	},
 	data: function() {
 		return {
-			searchQuery: ''
+			query: '',
+			loading: false
 		};
 	},
 	props: ['results'],
 	methods: {
-		performSearch: function() {
-			// if text present when submitted, perform GET request
-			var title = this.searchQuery.trim();
-			if ( title ) {
-				this.$http.jsonp(searchBase + title).then(function( response ) {
+		// update search results array or reset
+		progress: function() {
+			// temporary results array
+			var resultsCache = [];
+			// if empty, clear results and default
+			if ( !this.query ) {
+				this.clear();
+				return;
+			}
+			// if query typed, perform GET request
+			if ( this.query ) {
+				this.loading = true;
+				this.$http.jsonp( searchBase + this.query ).then(function( response ) {
 					// for each result, push an object to results array
 					for ( var i = 0; i < response.data[1].length; i++ ) {
-						this.results.push({ 
+						resultsCache.push({ 
 							title: response.data[1][i], 
 							blurb: response.data[2][i], 
-							link: response.data[3][i] 
+							link: response.data[3][i]
 						});
 					}
+					this.loading = false;
+					// replace results data with temp array
+					this.results = resultsCache;
 				});
-				// clear results if field is empty
-			} else {
-				this.results = '';
 			}
+		},
+		// clear search results and reset state
+		clear: function() {
+			this.loading = false;
+			this.query = '';
+			this.results = [];
+		},
+		// add selected result to the media array
+		addMedia: function( media ) {
+			this.$http.jsonp(_urlBase + media).then(function( response ) {
+				VM.$data.tasks.push( media );
+				this.query = '';
+				this.results = [];
+			});
 		}
 	}
 });
@@ -185,7 +208,7 @@ Vue.component('tasks-component', {
 	}
 });
 
-var vm = new Vue({
+var VM = new Vue({
 	el: '#app',
 	data: {
 		tasks: [

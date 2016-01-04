@@ -37,9 +37,11 @@
 			<!-- tbd replace w/ vueify or similar -->
 			<template id="search-template">
 				<div class="form-group">
+					<p v-if="loading">Loading...</p>
 					<input type="text" class="form-control" placeholder="search media" 
-					v-model="searchQuery" 
-					@keyup.enter.prevent="performSearch"
+					v-model="query" 
+					@keyup.prevent="progress | debounce 500" 
+					@keyup.esc="clear" 
 					>
 				</div>
 				<div class="search-results" 
@@ -49,9 +51,9 @@
 					<ul class="list-group">
 						<li class="list-group-item" 
 							v-for="result in results"
+							@click.prevent="addMedia( result )"
 						>
 						{{ result.title }} 
-						<br>({{ result.blurb }})
 						</li>
 					</ul>
 				</div>
@@ -102,7 +104,7 @@
 
 				</div>
 	
-				<p v-else class="prompt">No tasks yet - add some in the field above!</p>
+				<p v-else class="prompt">No media added yet</p>
 	
 				<pre>{{ $data | json }}</pre>
 			</template>
