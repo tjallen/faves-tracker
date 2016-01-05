@@ -31,7 +31,7 @@
 				<media-component :list="medias" :genres="genres">
 				</media-component>
 				
-				<pre>{{ $data | json }}</pre>
+				<!-- <pre>{{ $data | json }}</pre> -->
 				
 			</div> <!-- end app -->
 			
@@ -72,7 +72,7 @@
 						<li class="list-group-item" 
 							:class="{ 'genre' : media.genre, 'editing' : media == editedMedia }" 
 							v-for="media in list" 
-							@click="startEdit( media )"
+							@click="beginEdit( media )"
 						>
 	
 							<span class="controls">
@@ -98,13 +98,15 @@
 									<p>Select genre: </p>
 									<li
 									v-for="genre in genres"
+									@click="setGenre( genre.title )"
 									>
 									 {{ genre.title }}
 									</li>
 								</ul>
+								<button @mousedown="cancelEdit( media )">Cancel edit</button>
 								<button
 								@mousedown="completeEdit( media )"
-								>Done</button>
+								>Done edit</button>
 							</div>
 						</li>
 					</ul>

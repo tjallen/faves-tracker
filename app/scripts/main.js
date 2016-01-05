@@ -5,14 +5,8 @@
 var $wikiMedia = $( '.media' );
 var $wikiText = $wikiMedia.find( '.media__text' );
 var $wikiImage = $wikiMedia.find( '.media__image' );
+;*/
 // bulding the url
-var mediaTitles = [
-	// 'The Wire',
-	'Breaking Bad',
-	// 'Deadwood',
-	'The Wire'
-];*/
-var dataCache = {};
 var _apiEndpoint = 'http://en.wikipedia.org/w/api.php';
 var apiAction = '?action=query';
 var apiFormat = '&format=json';
@@ -48,6 +42,11 @@ Vue.component('search-component', {
 		resultsPresent: function() {
 				return this.results.length;
 		}
+	},
+	// DEV only - auto search for L U D I C R O U S  S P E E D
+	created: function() {
+		this.$data.query = 'The Wire';
+		this.progress();
 	},
 	methods: {
 		// update search results array or reset
@@ -100,7 +99,7 @@ Vue.component('media-component', {
 	template: '#media-template',
 	data: function() {
 		return {
-			editedMedia: null,
+			editedMedia: null
 		};
 	},
 	props: ['list', 'genres'],
@@ -110,24 +109,31 @@ Vue.component('media-component', {
 		deleteMedia: function( media ) {
 			this.list.$remove( media );
 		},
-		startEdit: function( media ) {
-			this.originalTitle = media.title;
+		beginEdit: function( media ) {
+			// cache the state of the media pre-edit
+			this.origTitle = media.title;
+			this.origBlurb = media.blurb;
+			this.origLink = media.link;
+			this.origGenre = media.genre;
 			this.editedMedia = media;
 		},
 		completeEdit: function( media ) {
+			// finish editing (keep changes)
 			if ( !this.editedMedia ) {
 				return;
 			}
-			this.editedMedia = '';
-			media.title = media.title;
-			// if text is empty, delete this media
-			if ( !media.title ) {
-				this.deleteMedia( media );
-			}
+			this.editedMedia = null;
 		},
 		cancelEdit: function( media ) {
-			media.title = this.originalTitle;
 			this.editedMedia = null;
+			// return to the pre-edit state
+			media.title = this.origTitle;
+			media.blurb = this.origBlurb;
+			media.link = this.origLink;
+			media.genre = this.origGenre;
+		},
+		setGenre: function( genre ) {
+			this.editedMedia.genre = genre;
 		}
 	},
 	directives: {
@@ -147,11 +153,7 @@ Vue.component('media-component', {
 var VM = new Vue({
 	el: '#app',
 	data: {
-		medias: [
-			// { title: 'Deadwood' },
-			// { title: 'Breaking Bad' },
-			// { title: 'The Wire' }
-		],
+		medias: [],
 		searchResults: [],
 		genres: [
 			{ title: "tv", order: 1 },
