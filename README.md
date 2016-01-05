@@ -1,2 +1,2 @@
-# vuewiki
-experimenting w/ wikipedia api + vuejs
+# faves tracker
+experimenting w/ vue.js + various apis

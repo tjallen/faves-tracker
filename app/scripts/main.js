@@ -85,8 +85,9 @@ Vue.component('search-component', {
 		},
 		// add selected result to the media array
 		addMedia: function( media ) {
-			this.$http.jsonp(_urlBase + media).then(function( response ) {
+			this.$http.jsonp(_urlBase + media.title).then(function( response ) {
 				VM.$data.medias.push( media );
+				console.log(response);
 				this.query = '';
 				this.results = [];
 			});
@@ -158,12 +159,13 @@ var VM = new Vue({
 		genres: [
 			{ title: "tv", order: 1 },
 			{ title: "film", order: 2 },
-			{ title: "album", order: 3 },
-			{ title: "artist (music)", order: 4 },
-			{ title: "artist (art)", order: 5 },
-			{ title: "game", order: 6 },
-			{ title: "book", order: 7 },
-			{ title: "play", order: 8 }
+			// { title: "album", order: 3 },
+			// { title: "artist (music)", order: 4 },
+			// { title: "artist (art)", order: 5 },
+			// { title: "game", order: 6 },
+			// { title: "book", order: 7 },
+			// { title: "play", order: 8 },
+			{ title: "anime", order: 9 }
 		]
 	}
 /*	filters: {
