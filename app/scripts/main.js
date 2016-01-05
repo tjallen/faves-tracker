@@ -29,7 +29,7 @@ Vue.config.debug = true;
 Vue.component('search-component', {
 	template: '#search-template',
 	http: {
-		headers: { 'Api-User-Agent': 'Vuewiki 0.1 (github.com/tjallen/vuewiki); thomwork@gmail.com' }
+		headers: { 'Api-User-Agent': 'Vuewiki 0.1 (github.com/tjallen/faves-tracker); thomwork@gmail.com' }
 	},
 	data: function() {
 		return {
@@ -154,6 +154,7 @@ Vue.component('media-component', {
 var VM = new Vue({
 	el: '#app',
 	data: {
+		keys: {},
 		medias: [],
 		searchResults: [],
 		genres: [
@@ -165,8 +166,14 @@ var VM = new Vue({
 			// { title: "game", order: 6 },
 			// { title: "book", order: 7 },
 			// { title: "play", order: 8 },
-			{ title: "anime", order: 9 }
+			// example to use for add custom genre feature: { title: "anime", order: 9 }
 		]
+	},
+	// get and store api keys from key storage when VM is ready
+	ready: function() {
+		this.$http.get('../keys.json').then(function ( response ) {
+			this.$set( 'keys', response.data.keys );
+		});
 	}
 /*	filters: {
 		all: function( tasks ) {
