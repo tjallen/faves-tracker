@@ -42,16 +42,18 @@
 				if ( this.query ) {
 					this.loading = true;
 					this.$http.jsonp( exports.app.$data.dbSearch + this.query ).then(function( response ) {
+						var mediaTitle, // -> media.title
+								mediaDate, // -> media.date
+								i = 0,
+								length = response.data.results.length;
 						// iterate through results
-						for ( var i = 0; i < response.data.results.length; i++ ) {
-							console.log(response.data.results[ i ]);
+						for ( i = 0; i < length; i++ ) {
+							//console.log(response.data.results[ i ]);
 							// exclude persons from the results
 							if ( response.data.results[ i ].media_type === 'person' ) {
 								break;
 							}
 							/* tv data uses "name" && "first_air_date" properties whereas movie uses "title" && "release_date" so we standardise the objects here */
-							var mediaTitle,
-									mediaDate;
 							// standardise media.date property (year substring atm)
 							if ( response.data.results[ i ].first_air_date ) {
 								mediaDate = response.data.results[ i ].first_air_date.substring( 0,4 );
