@@ -38,7 +38,9 @@
 			<!-- tbd replace w/ vueify or similar -->			 
 			<template id="search-template">
 				<div class="form-group">
-					<div class="message--loading" v-if="loading">Loading...</div>
+					<message-component v-if="loading" type="">
+						Loading...
+					</message-component>
 					<input type="text" class="form-control" placeholder="search media" 
 					v-model="query" 
 					@keyup="progress | debounce 500" 
@@ -47,7 +49,7 @@
 					>
 				
 					<div class="search-results" 
-						v-show="resultsPresent"
+						v-if="resultsPresent"
 					>
 						<ul class="list-group">
 							<li class="list-group-item" 
@@ -117,6 +119,15 @@
 				<p v-else class="prompt">No media added yet</p>
 	
 				<pre>{{ $data | json }}</pre>
+			</template>
+			
+			<template id="message-template">
+				<div :class="messageTypes" v-show="display">
+					<span class="message__text">
+						<slot></slot>
+					</span>
+					<button class="message__close" @click="display =  false">X</button>
+				</div>
 			</template>
 			
 <!--			<h2>Vuewiki</h2>

@@ -9,13 +9,61 @@
 	display: none;
 }
 
-body {
-	background-color: $md-grey-500;
-	padding: 20px;
-}
+// dev
 
 pre {
 	display: none;
+	font-size: 10px;
+	margin: {
+		top: 10px;
+		bottom: 10px;
+	}
+}
+
+// prod
+
+// mixins
+
+@mixin readable-text {
+	color: #fff;
+	text-shadow: 2px 1px 2px #242424;
+}
+
+// message comp
+
+.message {
+	background-color: $md-grey-900;
+	padding: 15px;
+	position: absolute;
+	z-index: 99;
+	bottom: 0;
+	left: 0;
+	width: 100%;
+	.message__text {
+		color: #fff;
+	}
+	.message__close {
+		float: right;
+		background-color: $md-red-a400;
+		border: none;
+		color: #fff;
+	}
+}
+
+.message--success {
+	background-color: $md-green-500;
+}
+
+.message--warning {
+	background-color: $md-red-500;
+}
+
+body {
+	background-color: $md-grey-500;
+}
+
+main {
+	padding: 20px;
 }
 
 .form-inline {
@@ -29,13 +77,14 @@ pre {
 }
 
 .list-group-item {
+	@include readable-text;
 	.task-label {
 	}
 	.controls {
 		float: right;
 		button {
+			@include readable-text;
 			text-transform: uppercase;
-			color: $md-blue-grey-500;
 			border: none;
 			background-color: transparent;
 		}
@@ -47,48 +96,5 @@ pre {
 		input {
 			display: inline-block;
 		}
-	}
-	&.completed {
-		text-decoration: line-through;
-		color: $md-grey-300;
-	}
-}
-
-.counter {
-	color: $md-blue-grey-200;
-	margin: 10px;
-	text-align: center;
-	text-transform: uppercase;
-	font-size: 12px;
-	font-weight: bold;
-	letter-spacing: 1px;
-	span.num {
-		color: #fff;
-		border-radius: 15px;
-		background-color: $md-blue-grey-300;
-		padding: 2px 5px;
-	}
-}
-
-.prompt {
-	text-align: center;
-	font-weight: bold;
-	font-size: 11px;
-	color: $md-grey-500;
-}
-
-pre {
-	margin: {
-		top: 10px;
-		bottom: 10px;
-	}
-	font-size: 10px;
-}
-
-
-#vuewiki {
-	background-color: $md-grey-300;
-	.media {
-		border: 1px solid $md-red-500;
 	}
 }

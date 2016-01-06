@@ -13,7 +13,7 @@
 		template: '#search-template',
 		http: {
 			headers: {
-				 'Api-User-Agent': 'Faves tracker 0.1 (github.com/tjallen/faves-tracker); thomwork@gmail.com'
+				 'Api-User-Agent': 'Faves tracker 0.4 (github.com/tjallen/faves-tracker); thomwork@gmail.com'
 			 }
 		},
 		data: function() {
@@ -96,6 +96,27 @@
 					this.query = '';
 					this.results = [];
 				});
+			}
+		}
+	});
+	
+	// MESSAGES: extend & register component
+	Vue.component('message-component', {
+		template: '#message-template',
+		data: function() {
+			return {
+				display: true
+			};
+		},
+		props: [ 'type' ],
+		computed: {
+			messageTypes: function() {
+				var type = this.type;
+				return {
+					'message': true,
+					'message--success': type == 'success',
+					'message--warning': type == 'warning'
+				};
 			}
 		}
 	});
