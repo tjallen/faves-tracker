@@ -24,9 +24,22 @@ pre {
 
 // mixins
 
-@mixin readable-text {
+@mixin text--readable {
 	color: #fff;
 	text-shadow: 2px 1px 2px #242424;
+}
+
+@mixin animation--spin {
+	-webkit-animation: spin 1s infinite linear;
+	-webkit-transform-origin: 50% 50%;
+	@-webkit-keyframes spin {
+		0% {
+			-webkit-transform: rotate(0deg);
+		}
+		100% {
+			-webkit-transform: rotate(360deg);
+		}
+	}
 }
 
 // message comp
@@ -58,6 +71,31 @@ pre {
 	background-color: $md-red-500;
 }
 
+// search field
+
+
+.search {
+	position: relative;
+	.search__field {
+		
+	}
+	.search__results {
+		
+	}
+	.loading {
+		background-image: url('../images/loading.svg');
+		height: 14px;
+		width: 14px;
+		border-radius: 10px;
+		position: absolute;
+		top: 10px;
+		right: 10px;
+		@include animation--spin;
+	}
+}
+
+
+
 body {
 	background-color: $md-grey-500;
 }
@@ -77,13 +115,13 @@ main {
 }
 
 .list-group-item {
-	@include readable-text;
+	@include text--readable;
 	.task-label {
 	}
 	.controls {
 		float: right;
 		button {
-			@include readable-text;
+			@include text--readable;
 			text-transform: uppercase;
 			border: none;
 			background-color: transparent;

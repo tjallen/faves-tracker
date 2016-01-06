@@ -111,11 +111,10 @@
 		props: [ 'type' ],
 		computed: {
 			messageTypes: function() {
-				var type = this.type;
 				return {
 					'message': true,
-					'message--success': type == 'success',
-					'message--warning': type == 'warning'
+					'message--success': this.type == 'success',
+					'message--warning': this.type == 'warning'
 				};
 			}
 		}

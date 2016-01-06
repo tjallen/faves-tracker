@@ -37,18 +37,20 @@
 			
 			<!-- tbd replace w/ vueify or similar -->			 
 			<template id="search-template">
-				<div class="form-group">
-					<message-component v-if="loading" type="">
-						Loading...
-					</message-component>
-					<input type="text" class="form-control" placeholder="search media" 
+				<message-component v-if="loading" type="">
+					Loading...
+				</message-component>
+				<div class="form-group search">
+					<input type="text" class="form-control search__form" placeholder="search media" 
 					v-model="query" 
 					@keyup="progress | debounce 500" 
 					@keyup.esc="clear" 
 					@blur="clear"
 					>
+					
+					<div class="loading" v-if="loading"></div>
 				
-					<div class="search-results" 
+					<div class="search__results" 
 						v-if="resultsPresent"
 					>
 						<ul class="list-group">
@@ -56,7 +58,7 @@
 								v-for="result in results"
 								@mousedown="addMedia( result )"
 							>
-							{{ result.title }} ({{ result.date = null ? 'No date' : result.date }}) {{ result.type }}
+							{{ result.title }} ({{ result.date = null ? 'No date' : result.date }}) {{ result.type = null ? 'Unknown' : result.type }}
 							</li>
 						</ul>
 					</div>
@@ -66,12 +68,11 @@
 			
 			<template id="media-template">
 				
-				<div class="medias-list"
+				<div class="media"
 					v-show="list.length"
 				>
-					<p v-show="!list.length" class="counter">No items!</p>
-					<ul class="list-group">
-						<li class="list-group-item" 
+					<ul class="list-group media__list">
+						<li class="list-group-item media__item" 
 							:class="{ 'type' : media.type, 'editing' : media == editedMedia }" 
 							:style="{ backgroundImage: 'url(' + media.imagePathAbsolute + ')' }"
 							v-for="media in list" 
@@ -85,7 +86,7 @@
 	
 							<label class="media-label">{{ media.title }}</label>
 	
-							<div class="media--editing"
+							<div class="media__item--editing"
 							@blur="completeEdit( media )"
 							v-show="media == editedMedia"
 							>
