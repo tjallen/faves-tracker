@@ -6,18 +6,6 @@ var $wikiMedia = $( '.media' );
 var $wikiText = $wikiMedia.find( '.media__text' );
 var $wikiImage = $wikiMedia.find( '.media__image' );
 ;*/
-// bulding the url
-var _apiEndpoint = 'http://en.wikipedia.org/w/api.php';
-var apiAction = '?action=query';
-var apiFormat = '&format=json';
-var apiProp = '&prop=categories|extracts|pageprops';
-//var _urlBase = 'http://en.wikipedia.org/w/api.php?action=parse&format=json&prop=text|categories&section=0&page=';
-var _urlBase = _apiEndpoint + apiAction + apiFormat + apiProp +  '&exsentences=3&exintro=&explaintext=&titles=';
-var searchBase = _apiEndpoint + '?action=opensearch&format=json&limit=10&namespace=0&suggest=&search=';
-
-/* request url for parse -> query change
-/w/api.php?action=query&prop=categories|extracts|pageprops&format=json&exintro=&explaintext=&titles=The%20Wire
-*/
 
 /****************************
 VUE 
@@ -29,7 +17,9 @@ Vue.config.debug = true;
 Vue.component('search-component', {
 	template: '#search-template',
 	http: {
-		headers: { 'Api-User-Agent': 'Vuewiki 0.1 (github.com/tjallen/faves-tracker); thomwork@gmail.com' }
+		headers: {
+			 'Api-User-Agent': 'Faves tracker 0.1 (github.com/tjallen/faves-tracker); thomwork@gmail.com'
+		 }
 	},
 	data: function() {
 		return {
@@ -37,7 +27,7 @@ Vue.component('search-component', {
 			loading: false
 		};
 	},
-	props: ['results'],
+	props: ['results', 'searchcall'],
 	computed: {
 		resultsPresent: function() {
 				return this.results.length;
@@ -45,8 +35,8 @@ Vue.component('search-component', {
 	},
 	// DEV only - auto search for L U D I C R O U S  S P E E D
 	created: function() {
-		this.$data.query = 'The Wire';
-		this.progress();
+		// this.$data.query = 'The Wire';
+		// this.progress();
 	},
 	methods: {
 		// update search results array or reset
@@ -61,14 +51,24 @@ Vue.component('search-component', {
 			// if query typed, perform GET request
 			if ( this.query ) {
 				this.loading = true;
-				this.$http.jsonp( searchBase + this.query ).then(function( response ) {
-					// for each result, push an object to results array
-					for ( var i = 0; i < response.data[1].length; i++ ) {
+				this.$http.jsonp( VM.$data.dbSearch + this.query ).then(function( response ) {
+					// for each result, push an object to results cache
+					for ( var i = 0; i < response.data.results.length; i++ ) {
+						// tv data uses "name" property whereas movie uses "title" so we standardise the objects here
+						var mediaTitle;
+						if ( response.data.results[i].media_type === 'tv' ) {
+							mediaTitle = response.data.results[i].name;
+						}
+						if ( response.data.results[i].media_type === 'movie' ) {
+							mediaTitle = response.data.results[i].title;
+						}
 						resultsCache.push({ 
-							title: response.data[1][i], 
-							blurb: response.data[2][i], 
-							link: response.data[3][i],
-							genre: ''
+							type: response.data.results[i].media_type,
+							title: mediaTitle, 
+							blurb: response.data.results[i].overview, 
+							imagePath: response.data.results[i].poster_path,
+							imagePathAbsolute: 'https://image.tmdb.org/t/p/w396/' + response.data.results[i].poster_path,
+							id: response.data.results[i].id,
 						});
 					}
 					this.loading = false;
@@ -85,9 +85,8 @@ Vue.component('search-component', {
 		},
 		// add selected result to the media array
 		addMedia: function( media ) {
-			this.$http.jsonp(_urlBase + media.title).then(function( response ) {
+			this.$http.jsonp( 'https://api.themoviedb.org/3/' + media.type + '/' + media.id + '?api_key=' + VM.$data.keys.moviesdb ).then(function( response ) {
 				VM.$data.medias.push( media );
-				console.log(response);
 				this.query = '';
 				this.results = [];
 			});
@@ -103,7 +102,7 @@ Vue.component('media-component', {
 			editedMedia: null
 		};
 	},
-	props: ['list', 'genres'],
+	props: ['list', 'types'],
 	computed: {
 	},
 	methods: {
@@ -115,7 +114,7 @@ Vue.component('media-component', {
 			this.origTitle = media.title;
 			this.origBlurb = media.blurb;
 			this.origLink = media.link;
-			this.origGenre = media.genre;
+			this.origType = media.type;
 			this.editedMedia = media;
 		},
 		completeEdit: function( media ) {
@@ -131,10 +130,10 @@ Vue.component('media-component', {
 			media.title = this.origTitle;
 			media.blurb = this.origBlurb;
 			media.link = this.origLink;
-			media.genre = this.origGenre;
+			media.type = this.origType;
 		},
-		setGenre: function( genre ) {
-			this.editedMedia.genre = genre;
+		setType: function( type ) {
+			this.editedMedia.type = type;
 		}
 	},
 	directives: {
@@ -155,9 +154,10 @@ var VM = new Vue({
 	el: '#app',
 	data: {
 		keys: {},
+		dbSearch: null,
 		medias: [],
 		searchResults: [],
-		genres: [
+		types: [
 			{ title: "tv", order: 1 },
 			{ title: "film", order: 2 },
 			// { title: "album", order: 3 },
@@ -166,13 +166,16 @@ var VM = new Vue({
 			// { title: "game", order: 6 },
 			// { title: "book", order: 7 },
 			// { title: "play", order: 8 },
-			// example to use for add custom genre feature: { title: "anime", order: 9 }
+			// example to use for add custom type feature: { title: "anime", order: 9 }
 		]
 	},
-	// get and store api keys from key storage when VM is ready
 	ready: function() {
+		// get and store api keys from key storage when VM is ready
 		this.$http.get('../keys.json').then(function ( response ) {
 			this.$set( 'keys', response.data.keys );
+			// build search api request and set
+			// move to search component later prob
+			this.$set( 'dbSearch', 'https://api.themoviedb.org/3/search/multi?api_key=' + this.keys.moviesdb + '&query=');
 		});
 	}
 /*	filters: {

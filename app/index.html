@@ -25,10 +25,10 @@
 		
 			<div id="app">
 				
-				<search-component :results="searchResults">
+				<search-component :results="searchResults" :searchcall="dbSearch">
 				</search-component>
 			
-				<media-component :list="medias" :genres="genres">
+				<media-component :list="medias" :types="types">
 				</media-component>
 				
 				<!-- <pre>{{ $data | json }}</pre> -->
@@ -55,7 +55,7 @@
 							v-for="result in results"
 							@mousedown="addMedia( result )"
 						>
-						{{ result.title }} 
+						{{ result.title }} {{ result.type }}
 						</li>
 					</ul>
 				</div>
@@ -70,7 +70,8 @@
 					<p v-show="!list.length" class="counter">No items!</p>
 					<ul class="list-group">
 						<li class="list-group-item" 
-							:class="{ 'genre' : media.genre, 'editing' : media == editedMedia }" 
+							:class="{ 'type' : media.type, 'editing' : media == editedMedia }" 
+							:style="{ backgroundImage: 'url(' + media.imagePathAbsolute + ')' }"
 							v-for="media in list" 
 							@click="beginEdit( media )"
 						>
@@ -95,12 +96,12 @@
 									v-model="media.blurb"
 								></textarea>
 								<ul>
-									<p>Select genre: </p>
+									<p>Select media type: </p>
 									<li
-									v-for="genre in genres"
-									@click="setGenre( genre.title )"
+									v-for="type in types"
+									@click="setType( type.title )"
 									>
-									 {{ genre.title }}
+									 {{ type.title }}
 									</li>
 								</ul>
 								<button @mousedown="cancelEdit( media )">Cancel edit</button>
