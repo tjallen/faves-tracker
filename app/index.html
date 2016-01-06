@@ -38,26 +38,26 @@
 			<!-- tbd replace w/ vueify or similar -->			 
 			<template id="search-template">
 				<div class="form-group">
-					<p v-if="loading">Loading...</p>
+					<div class="message--loading" v-if="loading">Loading...</div>
 					<input type="text" class="form-control" placeholder="search media" 
 					v-model="query" 
 					@keyup="progress | debounce 500" 
 					@keyup.esc="clear" 
 					@blur="clear"
 					>
-				</div>
-				<div class="search-results" 
-					v-show="resultsPresent"
-				>
-					<p>Results:</p>
-					<ul class="list-group">
-						<li class="list-group-item" 
-							v-for="result in results"
-							@mousedown="addMedia( result )"
-						>
-						{{ result.title }} {{ result.type }}
-						</li>
-					</ul>
+				
+					<div class="search-results" 
+						v-show="resultsPresent"
+					>
+						<ul class="list-group">
+							<li class="list-group-item" 
+								v-for="result in results"
+								@mousedown="addMedia( result )"
+							>
+							{{ result.title }} ({{ result.date = null ? 'No date' : result.date }}) {{ result.type }}
+							</li>
+						</ul>
+					</div>
 				</div>
 				<pre>{{ $data | json }}</pre>
 			</template>

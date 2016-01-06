@@ -28,11 +28,6 @@
 					return this.results.length;
 			}
 		},
-		// DEV only - auto search for L U D I C R O U S  S P E E D
-		created: function() {
-			// this.$data.query = 'The Wire';
-			// this.progress();
-		},
 		methods: {
 			// update search results array or reset
 			progress: function() {
@@ -47,27 +42,41 @@
 				if ( this.query ) {
 					this.loading = true;
 					this.$http.jsonp( exports.app.$data.dbSearch + this.query ).then(function( response ) {
-						// for each result, push an object to results cache
+						// iterate through results
 						for ( var i = 0; i < response.data.results.length; i++ ) {
-							// tv data uses "name" property whereas movie uses "title" so we standardise the objects here
-							var mediaTitle;
+							console.log(response.data.results[i]);
+							// exclude persons from the results
+							if ( response.data.results[i].media_type === 'person' ) {
+								break;
+							}
+							/* tv data uses "name" && "first_air_date" properties whereas movie uses "title" && "release_date" so we standardise the objects here */
+							var mediaTitle,
+									mediaDate;
+							// standardise media.date property (year substring atm)
+							if ( response.data.results[i].first_air_date ) {
+								mediaDate = response.data.results[i].first_air_date.substring( 0,4 );
+							} else if ( response.data.results[i].release_date ) {
+								mediaDate = response.data.results[i].release_date.substring( 0,4 );
+							}
+							// standardise media.type property
 							if ( response.data.results[i].media_type === 'tv' ) {
 								mediaTitle = response.data.results[i].name;
-							}
-							if ( response.data.results[i].media_type === 'movie' ) {
+							}	else if ( response.data.results[i].media_type === 'movie' ) {
 								mediaTitle = response.data.results[i].title;
 							}
+							// push an object to results cache
 							resultsCache.push({ 
 								type: response.data.results[i].media_type,
 								title: mediaTitle, 
 								blurb: response.data.results[i].overview, 
+								date: mediaDate,
 								imagePath: response.data.results[i].poster_path,
 								imagePathAbsolute: 'https://image.tmdb.org/t/p/w396/' + response.data.results[i].poster_path,
 								id: response.data.results[i].id,
 							});
 						}
 						this.loading = false;
-						// replace results data with temp array
+						// replace results data with the results cache
 						this.results = resultsCache;
 					});
 				}
