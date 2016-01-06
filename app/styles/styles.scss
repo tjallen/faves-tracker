@@ -10,20 +10,12 @@
 }
 
 body {
-	background-color: $md-grey-100;
+	background-color: $md-grey-500;
 	padding: 20px;
 }
 
-button.task-submit-new, button.clear-completed {
-	background-color: $md-blue-grey-200;
-	border: none;
-	color: #fff;
-	width: auto;
-	margin: 5px 0;
-	padding: 3px 10px;
-	border-radius: 3px;
-	text-transform: uppercase;
-	float: right;
+pre {
+	display: none;
 }
 
 .form-inline {
