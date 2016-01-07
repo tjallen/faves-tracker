@@ -1,10 +1,6 @@
 
 (function ( exports ) {
 	'use strict';
-	
-	/****************************
-	VUE 
-	****************************/
 
 	Vue.config.debug = true;
 
@@ -13,7 +9,7 @@
 		template: '#search-template',
 		http: {
 			headers: {
-				 'Api-User-Agent': 'Faves tracker 0.4 (github.com/tjallen/faves-tracker); thomwork@gmail.com'
+				 'Api-User-Agent': 'Faves tracker 0.6 (github.com/tjallen/faves-tracker); thomwork@gmail.com'
 			 }
 		},
 		data: function() {
@@ -83,7 +79,7 @@
 					});
 				}
 			},
-			// clear search results and reset state
+			// clear search results, query; reset state
 			clear: function() {
 				this.loading = false;
 				this.query = '';
@@ -93,8 +89,7 @@
 			addMedia: function( media ) {
 				this.$http.jsonp( 'https://api.themoviedb.org/3/' + media.type + '/' + media.id + '?api_key=' + exports.app.$data.keys.moviesdb ).then(function( response ) {
 					exports.app.$data.medias.push( media );
-					this.query = '';
-					this.results = [];
+					this.clear();
 				});
 			}
 		}

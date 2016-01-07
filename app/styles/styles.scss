@@ -22,6 +22,35 @@ pre {
 
 // prod
 
+// vars
+
+$body: $md-grey-500;
+
+// generic global
+
+body {
+	background-color: $md-grey-200;
+	color: $md-grey-900;
+}
+
+main {
+	padding: 0 20px;
+}
+
+ul {
+	margin: 0;
+	padding: 0;
+	li {
+		list-style-type: none;
+	}
+}
+
+.form-inline {
+	height: 50px;
+	margin-bottom: 40px;
+	display: block;
+}
+
 // mixins
 
 @mixin text--readable {
@@ -73,14 +102,47 @@ pre {
 
 // search field
 
-
 .search {
 	position: relative;
+	margin-bottom: 20px;
 	.search__field {
-		
+		width: 100%;
+		margin-bottom: 20px;
+		padding: 8px;
+		border-radius: 2px;
+		border: none;
 	}
 	.search__results {
-		
+		background-color: #fff;
+		.list-group {
+			border-radius: 0;
+		}
+		.search__counter {
+			font-weight: bold;
+			padding: 6px;
+			font-size: 12px;
+			color: $md-grey-600;
+		}
+		.search__media {
+			padding: 10px 5px;
+			border-top: 1px solid $md-grey-200;
+			.search__title {
+				font-style: italic;
+			}
+			.search__date {
+				color: $md-grey-400;
+			}
+			.search__type {
+				background-color: $md-blue-500;
+				color: #fff;
+				float: right;
+				padding: 1px 3px;
+				text-transform: uppercase;
+				font-size: 11px;
+				font-weight: bold;
+				text-align: center;
+			}
+		}
 	}
 	.loading {
 		background-image: url('../images/loading.svg');
@@ -94,45 +156,48 @@ pre {
 	}
 }
 
+// media
 
-
-body {
-	background-color: $md-grey-500;
-}
-
-main {
-	padding: 20px;
-}
-
-.form-inline {
-	height: 50px;
-	margin-bottom: 40px;
-	display: block;
-}
-
-.list-group {
-	margin-bottom: 10px;
-}
-
-.list-group-item {
-	@include text--readable;
-	.task-label {
-	}
-	.controls {
-		float: right;
-		button {
+.media {
+	.list-group {
+		margin-bottom: 10px;
+		.list-group-item {
 			@include text--readable;
-			text-transform: uppercase;
-			border: none;
-			background-color: transparent;
-		}
-	}
-	&.editing {
-		label {
-			display: none;
-		}
-		input {
-			display: inline-block;
+			position: relative;
+			height: 200px;
+			background: {
+				repeat: no-repeat;
+				position: center center;
+			}
+			.task-label {
+			}
+			.controls {
+				float: right;
+				button {
+					@include text--readable;
+					text-transform: uppercase;
+					border: none;
+					background-color: transparent;
+					position: absolute;
+					top: 5px;
+					right: 5px;
+				}
+			}
+			.media__item--editing {
+				background-color: rgba(33, 33, 33, 0.85);
+				color: #fff;
+				input, textarea {
+					background-color: $md-grey-800;
+				}
+			}
+			&.editing {
+				label {
+					display: none;
+				}
+				input {
+					display: inline-block;
+				}
+			}
 		}
 	}
 }

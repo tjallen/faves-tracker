@@ -1,16 +1,20 @@
 (function( exports ) {
 	'use strict';
 	
-	var storage_key = 'vue-medias';
+	var _storage_key = 'vue-medias';
 	
 	exports.mediaStore = {
 		retrieve: function() {
-			console.log("retrieving state of medias from localStorage");
-			return JSON.parse( localStorage.getItem( storage_key ) || '[]');
+			console.log( 'got from localStorage' );
+			return JSON.parse( localStorage.getItem( _storage_key ) || '[]');
 		},
 		save: function( medias ) {
-			console.log("saving state of medias to localStorage");
-			return localStorage.setItem( storage_key, JSON.stringify( medias ) );
+			console.log( 'saved to localStorage' );
+			return localStorage.setItem( _storage_key, JSON.stringify( medias ) );
+		},
+		clear: function() {
+			console.log( 'clearing medias from localStorage' );
+			return localStorage.clear( _storage_key );
 		}
 	};
 	

@@ -8,7 +8,6 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<link rel="apple-touch-icon" href="apple-touch-icon.png">
 		<!-- inject:css -->
-		<link rel="stylesheet" href="styles/bootstrap.min.css">
 		<!-- endinject -->
 
 		<!-- main user styles -->
@@ -22,6 +21,8 @@
 		</header>
 
 		<main>
+			
+			<h1>Favourites tracker</h1>
 		
 			<div id="app">
 				
@@ -41,7 +42,7 @@
 					Loading...
 				</message-component>
 				<div class="form-group search">
-					<input type="text" class="form-control search__form" placeholder="search media" 
+					<input type="text" class="form-control search__field" placeholder="Search for movies, TV shows..." 
 					v-model="query" 
 					@keyup="progress | debounce 500" 
 					@keyup.esc="clear" 
@@ -51,16 +52,24 @@
 					<div class="loading" v-if="loading">
 					</div>
 					<div class="search__results" 
-						v-if="resultsPresent"
+						v-if="query"
 					>
 						<ul class="list-group">
 							<li class="list-group-item search__counter"
 							v-if="query">{{ results.length }} results</li>
-							<li class="list-group-item" 
+							<li class="list-group-item search__media" 
 								v-for="result in results"
 								@mousedown="addMedia( result )"
 							>
-							{{ result.title }} ({{ result.date = null ? 'No date' : result.date }}) {{ result.type = null ? 'Unknown' : result.type }}
+							<span class="search__title">
+								{{ result.title }}
+							</span> 
+							<span class="search__date">
+								({{ result.date == null ? 'Unspecified' : result.date }})
+							</span>
+							<span class="search__type">
+								{{ result.type == null ? 'Unknown' : result.type }}
+							</span> 
 							</li>
 						</ul>
 					</div>
@@ -110,17 +119,17 @@
 									 {{ type.title }}
 									</li>
 								</ul>
-								<button @mousedown="cancelEdit( media )">Cancel edit</button>
+								<button @mousedown="cancelEdit( media )">Discard changes</button>
 								<button
 								@mousedown="completeEdit( media )"
-								>Done edit</button>
+								>Save</button>
 							</div>
 						</li>
 					</ul>
 
 				</div>
 	
-				<p v-else class="prompt">No media added yet</p>
+				<p v-else class="prompt">No media added yet - try searching in the field above!</p>
 	
 				<pre>{{ $data | json }}</pre>
 			</template>
@@ -133,15 +142,6 @@
 					<button class="message__close" @click="display =  false">X</button>
 				</div>
 			</template>
-			
-<!--			<h2>Vuewiki</h2>
-			<div id="vuewiki">
-				<div class="media">
-					<div class="media__image"></div>
-					<div class="media__text"></div>
-				</div>
-			</div>
-			-->
 			
 		</main>
 
