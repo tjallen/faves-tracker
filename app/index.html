@@ -48,12 +48,14 @@
 					@blur="clear"
 					>
 					
-					<div class="loading" v-if="loading"></div>
-				
+					<div class="loading" v-if="loading">
+					</div>
 					<div class="search__results" 
 						v-if="resultsPresent"
 					>
 						<ul class="list-group">
+							<li class="list-group-item search__counter"
+							v-if="query">{{ results.length }} results</li>
 							<li class="list-group-item" 
 								v-for="result in results"
 								@mousedown="addMedia( result )"
@@ -75,7 +77,8 @@
 						<li class="list-group-item media__item" 
 							:class="{ 'type' : media.type, 'editing' : media == editedMedia }" 
 							:style="{ backgroundImage: 'url(' + media.imagePathAbsolute + ')' }"
-							v-for="media in list" 
+							v-for="media in list"
+							track-by="id" 
 							@click="beginEdit( media )"
 						>
 	

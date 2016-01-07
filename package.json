@@ -47,7 +47,6 @@
     "stream-series": "^0.1.1"
   },
   "dependencies": {
-		"vue-resource": "^0.5.1",
-    "vue-typeahead": "^2.0.0"
+    "vue-resource": "^0.5.1"
   }
 }
