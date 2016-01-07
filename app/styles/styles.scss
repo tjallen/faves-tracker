@@ -124,18 +124,24 @@ ul {
 			color: $md-grey-600;
 		}
 		.search__media {
+			position: relative;
 			padding: 10px 5px;
 			border-top: 1px solid $md-grey-200;
 			.search__title {
 				font-style: italic;
+				display: block;
 			}
 			.search__date {
 				color: $md-grey-400;
+				display: block;
+				font-size: 11px;
 			}
 			.search__type {
+				position: absolute;
+				top: 10px;
+				right: 10px;
 				background-color: $md-blue-500;
 				color: #fff;
-				float: right;
 				padding: 1px 3px;
 				text-transform: uppercase;
 				font-size: 11px;
@@ -168,6 +174,7 @@ ul {
 			background: {
 				repeat: no-repeat;
 				position: center center;
+				size: cover;
 			}
 			.task-label {
 			}

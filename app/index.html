@@ -29,7 +29,12 @@
 				<search-component :results="searchResults" :searchcall="dbSearch">
 				</search-component>
 			
-				<media-component :list="medias" :types="types">
+				<h2>TV</h2>
+				<media-component :list="medias | filterBy 'tv' in 'type'" :types="types">
+				</media-component>
+				
+				<h2>Film</h2>
+				<media-component :list="medias | filterBy 'movie' in 'type'" :types="types">
 				</media-component>
 				
 				<!-- <pre>{{ $data | json }}</pre> -->
@@ -62,10 +67,11 @@
 								@mousedown="addMedia( result )"
 							>
 							<span class="search__title">
-								{{ result.title }}
+								{{ result.title }} 
 							</span> 
 							<span class="search__date">
-								({{ result.date == null ? 'Unspecified' : result.date }})
+								({{ result.date == null ? 'Unspecified' : result.date + ', '}}
+								{{ result.language == undefined ? '' : result.language | uppercase }})
 							</span>
 							<span class="search__type">
 								{{ result.type == null ? 'Unknown' : result.type }}
@@ -96,7 +102,7 @@
 								>X</button>
 							</span>
 	
-							<label class="media-label">{{ media.title }}</label>
+							<label class="media-label">{{ media.title }} ( {{ $index }} )</label>
 	
 							<div class="media__item--editing"
 							@blur="completeEdit( media )"

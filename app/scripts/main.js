@@ -40,11 +40,11 @@
 					this.$http.jsonp( exports.app.$data.dbSearch + this.query ).then(function( response ) {
 						var mediaTitle, // -> media.title
 								mediaDate, // -> media.date
+								mediaLanguage, // -> media.language
 								i = 0,
 								length = response.data.results.length;
 						// iterate through results
 						for ( i = 0; i < length; i++ ) {
-							//console.log(response.data.results[ i ]);
 							// exclude persons from the results
 							if ( response.data.results[ i ].media_type === 'person' ) {
 								break;
@@ -62,12 +62,19 @@
 							}	else if ( response.data.results[ i ].media_type === 'movie' ) {
 								mediaTitle = response.data.results[ i ].title;
 							}
+							// set up a language property if there is one, otherwise null
+							if ( response.data.results[ i ].original_language ) {
+								mediaLanguage = response.data.results[ i ].original_language;
+							} else {
+								mediaLanguage = null;
+							}
 							// push an object to results cache
 							resultsCache.push({ 
 								type: response.data.results[ i ].media_type,
 								title: mediaTitle, 
 								blurb: response.data.results[ i ].overview, 
 								date: mediaDate,
+								language: mediaLanguage,
 								imagePath: response.data.results[ i ].poster_path,
 								imagePathAbsolute: 'https://image.tmdb.org/t/p/w396/' + response.data.results[ i ].poster_path,
 								id: response.data.results[ i ].id,
