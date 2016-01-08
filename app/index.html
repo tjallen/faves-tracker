@@ -59,8 +59,8 @@
 					<div class="search__results" 
 						v-if="query"
 					>
-						<ul class="list-group">
-							<li class="list-group-item search__counter"
+						<ul>
+							<li class="search__counter"
 							v-if="query">{{ results.length }} results</li>
 							<li class="list-group-item search__media" 
 								v-for="result in results"
@@ -73,7 +73,8 @@
 								({{ result.date == null ? 'Unspecified' : result.date + ', '}}
 								{{ result.language == undefined ? '' : result.language | uppercase }})
 							</span>
-							<span class="search__type">
+							<span class="search__type"
+							:class="{ 'search__type--tv': result.type == 'tv', 'search__type--movie': result.type == 'movie' }">
 								{{ result.type == null ? 'Unknown' : result.type }}
 							</span> 
 							</li>
@@ -88,50 +89,55 @@
 				<div class="media"
 					v-show="list.length"
 				>
-					<ul class="list-group media__list">
-						<li class="list-group-item media__item" 
-							:class="{ 'type' : media.type, 'editing' : media == editedMedia }" 
-							:style="{ backgroundImage: 'url(' + media.imagePathAbsolute + ')' }"
+					<div class="media__list">
+						<div class="media__item" 
+							:class="{ 'editing' : media == editedMedia }" 
 							v-for="media in list"
 							track-by="id" 
 							@click="beginEdit( media )"
 						>
-	
+						
+						<div class="media__item--editing"
+						@blur="cancelEdit( media )"
+						v-show="media == editedMedia"
+						>
+							<input class="edit" type="text"
+								v-model="media.title"
+								@keyup.enter="completeEdit( media )"
+								@keyup.esc="cancelEdit( media )"
+							>
+							<textarea name="" id="" cols="30" rows="3"
+								v-model="media.blurb"
+							></textarea>
+							<ul>
+								<p>Select media type: </p>
+								<li
+								v-for="type in types"
+								@click="setType( type.title )"
+								>
+								 {{ type.title }}
+								</li>
+							</ul>
+							<button @mousedown="cancelEdit( media )">Discard changes</button>
+							<button
+							@mousedown="completeEdit( media )"
+							>Save</button>
+						</div>
+						
+						<div class="media__image">
+							<img :src="media.imagePathAbsolute"
+							:alt="media.title">
+						</div>
+						
 							<span class="controls">
 								<button class="media-remove" @click="deleteMedia( media )"
 								>X</button>
 							</span>
 	
-							<label class="media-label">{{ media.title }} ( {{ $index }} )</label>
-	
-							<div class="media__item--editing"
-							@blur="completeEdit( media )"
-							v-show="media == editedMedia"
-							>
-								<input class="edit" type="text"
-									v-model="media.title"
-									@keyup.enter="completeEdit( media )"
-									@keyup.esc="cancelEdit( media )"
-								>
-								<textarea name="" id="" cols="30" rows="3"
-									v-model="media.blurb"
-								></textarea>
-								<ul>
-									<p>Select media type: </p>
-									<li
-									v-for="type in types"
-									@click="setType( type.title )"
-									>
-									 {{ type.title }}
-									</li>
-								</ul>
-								<button @mousedown="cancelEdit( media )">Discard changes</button>
-								<button
-								@mousedown="completeEdit( media )"
-								>Save</button>
-							</div>
-						</li>
-					</ul>
+							<div class="media__info">{{ media.title }} ( {{ $index }} )</div>
+						</div>
+
+					</div>
 
 				</div>
 	

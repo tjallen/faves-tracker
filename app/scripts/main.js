@@ -41,7 +41,7 @@
 						var mediaTitle, // -> media.title
 								mediaDate, // -> media.date
 								mediaLanguage, // -> media.language
-								i = 0,
+								i,
 								length = response.data.results.length;
 						// iterate through results
 						for ( i = 0; i < length; i++ ) {
@@ -135,7 +135,9 @@
 		},
 		methods: {
 			deleteMedia: function( media ) {
-				this.list.$remove( media );
+				// probably change how the comp/parent data works..
+				//this.list.$remove( media );
+				exports.app.$data.medias.$remove( media );
 			},
 			beginEdit: function( media ) {
 				// cache the state of the media pre-edit
@@ -147,6 +149,7 @@
 			},
 			completeEdit: function( media ) {
 				// finish editing (keep changes)
+				console.log("completeEdit");
 				if ( !this.editedMedia ) {
 					return;
 				}
