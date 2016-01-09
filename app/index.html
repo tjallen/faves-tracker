@@ -94,7 +94,6 @@
 							:class="{ 'editing' : media == editedMedia }" 
 							v-for="media in list"
 							track-by="id" 
-							@click="beginEdit( media )"
 						>
 						
 						<div class="media__item--editing"
@@ -130,11 +129,22 @@
 						</div>
 						
 							<span class="controls">
+								<button class="media-up"
+								v-show="$index !== 0"
+								@click="changeOrder( media, $index, ($index - 1) )"
+								>&uarr;</button>
+								<button class="media-down"
+								v-show="$index !== (list.length - 1)"
+								@click="changeOrder( media, $index, ($index + 1) )"
+								>&darr;</button>
+								<button class="media-edit"
+								@click="beginEdit( media )"
+								>&equiv;</button>
 								<button class="media-remove" @click="deleteMedia( media )"
 								>X</button>
 							</span>
 	
-							<div class="media__info">{{ media.title }} ( {{ $index }} )</div>
+							<!-- <div class="media__info">{{ media.title }} ( {{ $index }} )</div> -->
 						</div>
 
 					</div>

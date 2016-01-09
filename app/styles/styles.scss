@@ -224,7 +224,7 @@ ul {
 			}
 			.controls {
 				button {
-					@include text--readable;
+					color: $accent;
 					text-transform: uppercase;
 					border: none;
 					background-color: transparent;

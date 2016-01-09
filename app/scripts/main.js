@@ -77,6 +77,7 @@
 								language: mediaLanguage,
 								imagePath: response.data.results[ i ].poster_path,
 								imagePathAbsolute: 'https://image.tmdb.org/t/p/w396/' + response.data.results[ i ].poster_path,
+								dragging: false,
 								id: response.data.results[ i ].id,
 							});
 						}
@@ -143,7 +144,6 @@
 				// cache the state of the media pre-edit
 				this.origTitle = media.title;
 				this.origBlurb = media.blurb;
-				this.origLink = media.link;
 				this.origType = media.type;
 				this.editedMedia = media;
 			},
@@ -160,11 +160,23 @@
 				// return to the pre-edit state
 				media.title = this.origTitle;
 				media.blurb = this.origBlurb;
-				media.link = this.origLink;
 				media.type = this.origType;
 			},
 			setType: function( type ) {
 				this.editedMedia.type = type;
+			},
+			changeOrder: function ( media, source, destination ) {
+				// check the media isn't at the start || end of list
+				if ( exports.app.$data.medias[destination] === undefined ) {
+					// -> message component here
+					// or disable buttons at [0] || list.length
+					alert('nah');
+					return;
+				}
+				// swap the source and destination medias
+				var swapCache = exports.app.$data.medias[destination];
+				exports.app.$data.medias.$set(destination, exports.app.$data.medias[source]);
+				exports.app.$data.medias.$set(source, swapCache);
 			}
 		},
 		directives: {
