@@ -124,11 +124,14 @@
 						</div>
 						
 						<div class="media__image">
+							<div class="media__title"
+							v-show="media.displayTitle"
+							>{{ media.title }}</div>
 							<img :src="media.imagePathAbsolute"
 							:alt="media.title">
 						</div>
 						
-							<span class="controls">
+							<div class="controls">
 								<button class="media-up"
 								v-show="$index !== 0"
 								@click="changeOrder( media, $index, ($index - 1) )"
@@ -142,9 +145,8 @@
 								>&equiv;</button>
 								<button class="media-remove" @click="deleteMedia( media )"
 								>X</button>
-							</span>
+							</div>
 	
-							<!-- <div class="media__info">{{ media.title }} ( {{ $index }} )</div> -->
 						</div>
 
 					</div>

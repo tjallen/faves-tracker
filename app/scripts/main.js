@@ -41,6 +41,9 @@
 						var mediaTitle, // -> media.title
 								mediaDate, // -> media.date
 								mediaLanguage, // -> media.language
+								mediaImage, // -> media.image
+								displayTitle = false, // def
+								displayPoster = true, // def (tbc)
 								i,
 								length = response.data.results.length;
 						// iterate through results
@@ -68,6 +71,14 @@
 							} else {
 								mediaLanguage = null;
 							}
+							// set up poster options
+							if ( response.data.results[ i ].poster_path !== null ) {
+								mediaImage = 'https://image.tmdb.org/t/p/w396/' + response.data.results[ i ].poster_path;
+							// if there's no poster available, use pholder
+							} else if ( response.data.results[ i ].poster_path === null ) {
+								displayTitle = true;
+								mediaImage = '/images/media-placeholder.jpg';
+							}
 							// push an object to results cache
 							resultsCache.push({ 
 								type: response.data.results[ i ].media_type,
@@ -76,8 +87,10 @@
 								date: mediaDate,
 								language: mediaLanguage,
 								imagePath: response.data.results[ i ].poster_path,
-								imagePathAbsolute: 'https://image.tmdb.org/t/p/w396/' + response.data.results[ i ].poster_path,
-								dragging: false,
+								imagePathAbsolute: mediaImage,
+								dragging: false, // (tbc)
+								displayTitle: displayTitle,
+								displayPoster: displayPoster,
 								id: response.data.results[ i ].id,
 							});
 						}
@@ -167,10 +180,8 @@
 			},
 			changeOrder: function ( media, source, destination ) {
 				// check the media isn't at the start || end of list
+				// (buttons should only v-show when useable now tho)
 				if ( exports.app.$data.medias[destination] === undefined ) {
-					// -> message component here
-					// or disable buttons at [0] || list.length
-					alert('nah');
 					return;
 				}
 				// swap the source and destination medias
