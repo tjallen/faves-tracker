@@ -52,18 +52,20 @@
 							if ( response.data.results[ i ].media_type === 'person' ) {
 								break;
 							}
-							/* tv data uses "name" && "first_air_date" properties whereas movie uses "title" && "release_date" so we standardise the objects here */
-							// standardise media.date property (year substring atm)
-							if ( response.data.results[ i ].first_air_date ) {
-								mediaDate = response.data.results[ i ].first_air_date.substring( 0,4 );
-							} else if ( response.data.results[ i ].release_date ) {
-								mediaDate = response.data.results[ i ].release_date.substring( 0,4 );
-							}
-							// standardise media.type property
-							if ( response.data.results[ i ].media_type === 'tv' ) {
-								mediaTitle = response.data.results[ i ].name;
-							}	else if ( response.data.results[ i ].media_type === 'movie' ) {
-								mediaTitle = response.data.results[ i ].title;
+							/* tv data uses "name" & "first_air_date" properties whereas movie uses "title" & "release_date" so we standardise the mediaTitle & mediaDate vars here */
+							switch ( response.data.results[ i ].media_type ) {
+								case 'tv':
+									mediaTitle = response.data.results[ i ].name;
+									if ( response.data.results[ i ].first_air_date ) {
+										mediaDate = response.data.results[ i ].first_air_date.substring( 0,4 );
+									}
+									break;
+								case 'movie':
+									mediaTitle = response.data.results[ i ].title;
+									if ( response.data.results[ i ].release_date ) {
+									mediaDate = response.data.results[ i ].release_date.substring( 0,4 );	
+									}
+									break;
 							}
 							// set up a language property if there is one, otherwise null
 							if ( response.data.results[ i ].original_language ) {
