@@ -56,12 +56,14 @@
 							switch ( response.data.results[ i ].media_type ) {
 								case 'tv':
 									mediaTitle = response.data.results[ i ].name;
+									// check first_air_date is truthy so we don't get a typeError if it's null
 									if ( response.data.results[ i ].first_air_date ) {
 										mediaDate = response.data.results[ i ].first_air_date.substring( 0,4 );
 									}
 									break;
 								case 'movie':
 									mediaTitle = response.data.results[ i ].title;
+									// check release_date is truthy so we don't get a typeError if it's null
 									if ( response.data.results[ i ].release_date ) {
 									mediaDate = response.data.results[ i ].release_date.substring( 0,4 );	
 									}
@@ -122,12 +124,26 @@
 	Vue.component('message-component', {
 		template: '#message-template',
 		data: function() {
+      // bind display of this element to the property so we can toggle
 			return {
-				display: true
+				show: false
 			};
 		},
-		props: [ 'type' ],
+    props: {
+      type: {
+        type: String
+      },
+      dismissable: {
+        type: Boolean,
+        default: false,
+      },
+      duration: {
+        type: Number,
+        default: 0
+      },
+    },
 		computed: {
+      // computed types of messages
 			messageTypes: function() {
 				return {
 					'message': true,
@@ -135,7 +151,28 @@
 					'message--warning': this.type == 'warning'
 				};
 			}
-		}
+		},
+		events: {
+      'event--delete' : function(msg) {
+        console.log('broadcast recieved by message component' + this._uid + 'the msg was: ' + msg );
+        this.show = true;
+      }
+		},
+    watch: {
+      show: function( value ) {
+        // clearTimeout if it already exists
+        if ( this._timeout ) clearTimeout( this._timeout );
+        // set a timeout to toggle show after
+        if ( value && Boolean( this.duration ) ) {
+          this._timeout = setTimeout( this.toggleShow, this.duration );
+        }
+      }
+    },
+    methods: {
+      toggleShow: function() {
+        this.show = !this.show;
+      }
+    }
 	});
 
 	// MEDIAS: extend and register global component
@@ -143,7 +180,8 @@
 		template: '#media-template',
 		data: function() {
 			return {
-				editedMedia: null
+				editedMedia: null,
+        msg: ''
 			};
 		},
 		props: [ 'list', 'types' ],
@@ -151,10 +189,16 @@
 		},
 		methods: {
 			deleteMedia: function( media ) {
-				// probably change how the comp/parent data works..
-				//this.list.$remove( media );
+        this.msg = media.title;
+        console.log(media.title);
+        // remove from medias list
 				exports.app.$data.medias.$remove( media );
+        // broadcast to children
+				this.$broadcast( 'event--delete', this.msg );
 			},
+      resetMessage: function() {
+        this.msg = '';
+      },
 			beginEdit: function( media ) {
 				// cache the state of the media pre-edit
 				this.origTitle = media.title;

@@ -43,9 +43,7 @@
 			
 			<!-- tbd replace w/ vueify or similar -->			 
 			<template id="search-template">
-				<message-component v-if="loading" type="">
-					Loading...
-				</message-component>
+
 				<div class="form-group search">
 					<input type="text" class="form-control search__field" placeholder="Search for movies, TV shows..." 
 					v-model="query" 
@@ -61,7 +59,7 @@
 					>
 						<ul>
 							<li class="search__counter"
-							v-if="query">{{ results.length }} results</li>
+							v-show="query">{{ results.length }} results</li>
 							<li class="list-group-item search__media" 
 								v-for="result in results"
 								@mousedown="addMedia( result )"
@@ -154,16 +152,25 @@
 				</div>
 	
 				<p v-else class="prompt">No media added yet - try searching in the field above!</p>
+				
+				<message-component class="here i am"  
+				type="success" :dismissable="true" :duration="2000">
+					{{msg}} was deleted!
+          <slot>Slot empty...</slot>
+				</message-component>
 	
 				<pre>{{ $data | json }}</pre>
 			</template>
 			
 			<template id="message-template">
-				<div :class="messageTypes" v-show="display">
+				<div :class="messageTypes" 
+				v-show="show"
+				transition="popup"
+				>
 					<span class="message__text">
 						<slot></slot>
 					</span>
-					<button class="message__close" @click="display =  false">X</button>
+					<button class="message__close" @click="show =  false">X</button>
 				</div>
 			</template>
 			

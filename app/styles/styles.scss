@@ -109,7 +109,7 @@ ul {
 .message {
 	background-color: $md-grey-900;
 	padding: 15px;
-	position: absolute;
+	position: fixed;
 	z-index: 99;
 	bottom: 0;
 	left: 0;
@@ -118,10 +118,11 @@ ul {
 		color: #fff;
 	}
 	.message__close {
-		float: right;
-		background-color: $md-red-a400;
-		border: none;
-		color: #fff;
+    float: right;
+    background-color: rgba(36, 36, 36, 0.13);
+    border: none;
+    color: #fff;
+    padding: 3px 6px;
 	}
 }
 
@@ -131,6 +132,26 @@ ul {
 
 .message--warning {
 	background-color: $md-red-500;
+}
+
+// transitions
+
+/* always present */
+.popup-transition {
+  transition: all .5s ease;
+	height: 60px;
+	span {
+		opacity: 1;
+	}
+}
+
+/* .popup-enter defines the starting state for entering */
+/* .popup-leave defines the ending state for leaving */
+.popup-enter, .popup-leave {
+	height: 0px;
+	span {
+		opacity: 0;
+	}
 }
 
 // search field
