@@ -1,190 +1,190 @@
 <!doctype html>
 <html>
-	<head>
-		<meta charset="utf-8">
-		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-		<title></title>
-		<meta name="description" content="">
-		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<link rel="apple-touch-icon" href="apple-touch-icon.png">
-		<!-- inject:css -->
-		<!-- endinject -->
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title></title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <!-- inject:css -->
+    <!-- endinject -->
 
-		<!-- main user styles -->
-		<link rel="stylesheet" href="styles/styles.css">
-	</head>
+    <!-- main user styles -->
+    <link rel="stylesheet" href="styles/styles.css">
+  </head>
 
-	<body>
-		<!-- inject:svg -->
-		<!-- endinject -->
-		<header>
-		</header>
+  <body>
+    <!-- inject:svg -->
+    <!-- endinject -->
+    <header>
+    </header>
 
-		<main>
-			
-			<h1>Favourites tracker</h1>
-		
-			<div id="app">
-				
-				<search-component :results="searchResults" :searchcall="dbSearch">
-				</search-component>
-			
-				<h2>TV</h2>
-				<media-component :list="medias | filterBy 'tv' in 'type'" :types="types">
-				</media-component>
-				
-				<h2>Film</h2>
-				<media-component :list="medias | filterBy 'movie' in 'type'" :types="types">
-				</media-component>
-				
-				<!-- <pre>{{ $data | json }}</pre> -->
-				
-			</div> <!-- end app -->
-			
-			<!-- tbd replace w/ vueify or similar -->			 
-			<template id="search-template">
+    <main>
+      
+      <h1>Favourites tracker</h1>
+    
+      <div id="app">
+        
+        <search-component :results="searchResults" :searchcall="dbSearch">
+        </search-component>
+      
+        <h2>TV</h2>
+        <media-component :list="medias | filterBy 'tv' in 'type'" :types="types">
+        </media-component>
+        
+        <h2>Film</h2>
+        <media-component :list="medias | filterBy 'movie' in 'type'" :types="types">
+        </media-component>
+        
+        <!-- <pre>{{ $data | json }}</pre> -->
+        
+      </div> <!-- end app -->
+      
+      <!-- tbd replace w/ vueify or similar -->       
+      <template id="search-template">
 
-				<div class="form-group search">
-					<input type="text" class="form-control search__field" placeholder="Search for movies, TV shows..." 
-					v-model="query" 
-					@keyup="progress | debounce 500" 
-					@keyup.esc="clear" 
-					@blur="clear"
-					>
-					
-					<div class="loading" v-if="loading">
-					</div>
-					<div class="search__results" 
-						v-if="query"
-					>
-						<ul>
-							<li class="search__counter"
-							v-show="query">{{ results.length }} results</li>
-							<li class="list-group-item search__media" 
-								v-for="result in results"
-								@mousedown="addMedia( result )"
-							>
-							<span class="search__title">
-								{{ result.title }} 
-							</span> 
-							<span class="search__date">
-								({{ result.date == null ? 'Unspecified' : result.date + ', '}}
-								{{ result.language == undefined ? '' : result.language | uppercase }})
-							</span>
-							<span class="search__type"
-							:class="{ 'search__type--tv': result.type == 'tv', 'search__type--movie': result.type == 'movie' }">
-								{{ result.type == null ? 'Unknown' : result.type }}
-							</span> 
-							</li>
-						</ul>
-					</div>
-				</div>
-				<pre>{{ $data | json }}</pre>
-			</template>
-			
-			<template id="media-template">
-				
-				<div class="media"
-					v-show="list.length"
-				>
-					<div class="media__list">
-						<div class="media__item" 
-							:class="{ 'editing' : media == editedMedia }" 
-							v-for="media in list"
-							track-by="id" 
-						>
-						
-						<div class="media__item--editing"
-						@blur="cancelEdit( media )"
-						v-show="media == editedMedia"
-						>
-							<input class="edit" type="text"
-								v-model="media.title"
-								@keyup.enter="completeEdit( media )"
-								@keyup.esc="cancelEdit( media )"
-							>
-							<textarea name="" id="" cols="30" rows="3"
-								v-model="media.blurb"
-							></textarea>
-							<ul>
-								<p>Select media type: </p>
-								<li
-								v-for="type in types"
-								@click="setType( type.title )"
-								>
-								 {{ type.title }}
-								</li>
-							</ul>
-							<button @mousedown="cancelEdit( media )">Discard changes</button>
-							<button
-							@mousedown="completeEdit( media )"
-							>Save</button>
-						</div>
-						
-						<div class="media__image">
-							<div class="media__title"
-							v-show="media.displayTitle"
-							>{{ media.title }}</div>
-							<img :src="media.imagePathAbsolute"
-							:alt="media.title">
-						</div>
-						
-							<div class="controls">
-								<button class="media-up"
-								v-show="$index !== 0"
-								@click="changeOrder( media, $index, ($index - 1) )"
-								>&uarr;</button>
-								<button class="media-down"
-								v-show="$index !== (list.length - 1)"
-								@click="changeOrder( media, $index, ($index + 1) )"
-								>&darr;</button>
-								<button class="media-edit"
-								@click="beginEdit( media )"
-								>&equiv;</button>
-								<button class="media-remove" @click="deleteMedia( media )"
-								>X</button>
-							</div>
-	
-						</div>
+        <div class="form-group search">
+          <input type="text" class="form-control search__field" placeholder="Search for movies, TV shows..." 
+          v-model="query" 
+          @keyup="progress | debounce 500" 
+          @keyup.esc="clear" 
+          @blur="clear"
+          >
+          
+          <div class="loading" v-if="loading">
+          </div>
+          <div class="search__results" 
+            v-if="query"
+          >
+            <ul>
+              <li class="search__counter"
+              v-show="query">{{ results.length }} results</li>
+              <li class="list-group-item search__media" 
+                v-for="result in results"
+                @mousedown="addMedia( result )"
+              >
+              <span class="search__title">
+                {{ result.title }} 
+              </span> 
+              <span class="search__date">
+                ({{ result.date == null ? 'Unspecified' : result.date + ', '}}
+                {{ result.language == undefined ? '' : result.language | uppercase }})
+              </span>
+              <span class="search__type"
+              :class="{ 'search__type--tv': result.type == 'tv', 'search__type--movie': result.type == 'movie' }">
+                {{ result.type == null ? 'Unknown' : result.type }}
+              </span> 
+              </li>
+            </ul>
+          </div>
+        </div>
+        <pre>{{ $data | json }}</pre>
+      </template>
+      
+      <template id="media-template">
+        
+        <div class="media"
+          v-show="list.length"
+        >
+          <div class="media__list">
+            <div class="media__item" 
+              :class="{ 'editing' : media == editedMedia }" 
+              v-for="media in list"
+              track-by="id" 
+            >
+            
+            <div class="media__item--editing"
+            @blur="cancelEdit( media )"
+            v-show="media == editedMedia"
+            >
+              <input class="edit" type="text"
+                v-model="media.title"
+                @keyup.enter="completeEdit( media )"
+                @keyup.esc="cancelEdit( media )"
+              >
+              <textarea name="" id="" cols="30" rows="3"
+                v-model="media.blurb"
+              ></textarea>
+              <ul>
+                <p>Select media type: </p>
+                <li
+                v-for="type in types"
+                @click="setType( type.title )"
+                >
+                 {{ type.title }}
+                </li>
+              </ul>
+              <button @mousedown="cancelEdit( media )">Discard changes</button>
+              <button
+              @mousedown="completeEdit( media )"
+              >Save</button>
+            </div>
+            
+            <div class="media__image">
+              <div class="media__title"
+              v-show="media.displayTitle"
+              >{{ media.title }}</div>
+              <img :src="media.imagePathAbsolute"
+              :alt="media.title">
+            </div>
+            
+              <div class="controls">
+                <button class="media-up"
+                v-show="$index !== 0"
+                @click="changeOrder( media, $index, ($index - 1) )"
+                >&uarr;</button>
+                <button class="media-down"
+                v-show="$index !== (list.length - 1)"
+                @click="changeOrder( media, $index, ($index + 1) )"
+                >&darr;</button>
+                <button class="media-edit"
+                @click="beginEdit( media )"
+                >&equiv;</button>
+                <button class="media-remove" @click="deleteMedia( media )"
+                >X</button>
+              </div>
+  
+            </div>
 
-					</div>
+          </div>
 
-				</div>
-	
-				<p v-else class="prompt">No media added yet - try searching in the field above!</p>
-				
-				<message-component class="here i am"  
-				type="success" :dismissable="true" :duration="2000">
-					{{msg}} was deleted!
+        </div>
+  
+        <p v-else class="prompt">No media added yet - try searching in the field above!</p>
+        
+        <message-component class="here i am"  
+        type="success" :dismissable="true" :duration="2000">
+          {{msg}} was deleted!
           <slot>Slot empty...</slot>
-				</message-component>
-	
-				<pre>{{ $data | json }}</pre>
-			</template>
-			
-			<template id="message-template">
-				<div :class="messageTypes" 
-				v-show="show"
-				transition="popup"
-				>
-					<span class="message__text">
-						<slot></slot>
-					</span>
-					<button class="message__close" @click="show =  false">X</button>
-				</div>
-			</template>
-			
-		</main>
+        </message-component>
+  
+        <pre>{{ $data | json }}</pre>
+      </template>
+      
+      <template id="message-template">
+        <div :class="messageTypes" 
+        v-show="show"
+        transition="popup"
+        >
+          <span class="message__text">
+            <slot></slot>
+          </span>
+          <button class="message__close" @click="show =  false">X</button>
+        </div>
+      </template>
+      
+    </main>
 
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-		<script src="scripts/vendors/vue.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/vue-resource/0.5.1/vue-resource.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="scripts/vendors/vue.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue-resource/0.5.1/vue-resource.js"></script>
 
-		<!--inject:js-->
-		<script src="scripts/vendors/vendor.js"></script>
-		<script src="scripts/storage.js"></script>
-		<script src="scripts/main.js"></script>
-		
-		<!--endinject-->
-	</body>
+    <!--inject:js-->
+    <script src="scripts/vendors/vendor.js"></script>
+    <script src="scripts/storage.js"></script>
+    <script src="scripts/main.js"></script>
+    
+    <!--endinject-->
+  </body>
 </html>
