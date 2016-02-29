@@ -112,6 +112,14 @@
       },
       // add selected result to the media array
       addMedia: function( media ) {
+        // check if media's already been added
+        var idToCheck = media.id;
+        var lodashFindMedia = _.find(exports.app.$data.medias, { 'id': idToCheck });
+        if ( lodashFindMedia !== undefined ) {
+          // send to message component later
+          alert('Media already added');
+          return;
+        }
         this.$http.jsonp( 'https://api.themoviedb.org/3/' + media.type + '/' + media.id + '?api_key=' + exports.app.$data.keys.moviesdb ).then(function( response ) {
           exports.app.$data.medias.push( media );
           this.clear();
@@ -181,6 +189,7 @@
     data: function() {
       return {
         editedMedia: null,
+        deleteCache: null,
         msg: ''
       };
     },
@@ -189,12 +198,16 @@
     },
     methods: {
       deleteMedia: function( media ) {
+        this.deleteCache = media;
         this.msg = media.title;
         console.log(media.title);
         // remove from medias list
         exports.app.$data.medias.$remove( media );
         // broadcast to children
         this.$broadcast( 'event--delete', this.msg );
+      },
+      undoDelete: function() {
+        exports.app.$data.medias.push( this.deleteCache );
       },
       resetMessage: function() {
         this.msg = '';

@@ -157,6 +157,8 @@
         type="success" :dismissable="true" :duration="2000">
           {{msg}} was deleted!
           <slot>Slot empty...</slot>
+          <button type="button" name="button"
+          @click="undoDelete">Undo</button>
         </message-component>
   
         <pre>{{ $data | json }}</pre>
@@ -182,6 +184,7 @@
 
     <!--inject:js-->
     <script src="scripts/vendors/vendor.js"></script>
+    <script src="scripts/vendors/lodash.core.js"></script>
     <script src="scripts/storage.js"></script>
     <script src="scripts/main.js"></script>
     
