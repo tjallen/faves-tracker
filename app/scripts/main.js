@@ -112,9 +112,11 @@
       },
       // add selected result to the media array
       addMedia: function( media ) {
+        var idToCheck,
+            lodashFindMedia;
         // check if media's already been added
-        var idToCheck = media.id;
-        var lodashFindMedia = _.find(exports.app.$data.medias, { 'id': idToCheck });
+        idToCheck = media.id;
+        lodashFindMedia = _.find(exports.app.$data.medias, { 'id': idToCheck });
         if ( lodashFindMedia !== undefined ) {
           // send to message component later
           alert('Media already added');
@@ -238,13 +240,14 @@
         this.editedMedia.type = type;
       },
       changeOrder: function ( media, source, destination ) {
+        var swapCache;
         // check the media isn't at the start || end of list
         // (buttons should only v-show when useable now tho)
         if ( exports.app.$data.medias[destination] === undefined ) {
           return;
         }
         // swap the source and destination medias
-        var swapCache = exports.app.$data.medias[destination];
+        swapCache = exports.app.$data.medias[destination];
         exports.app.$data.medias.$set(destination, exports.app.$data.medias[source]);
         exports.app.$data.medias.$set(source, swapCache);
       }
